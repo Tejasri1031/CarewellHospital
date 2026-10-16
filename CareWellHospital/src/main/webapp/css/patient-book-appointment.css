@@ -1,0 +1,399 @@
+@charset "UTF-8";
+
+/* =========================
+   BOOKING SECTION
+   ========================= */
+.booking-section {
+	width: 100%;
+	max-width: 1100px;
+	margin: 35px auto;
+	padding: 0 30px;
+}
+
+/* =========================
+   BOOKING INTRO
+   ========================= */
+.booking-intro {
+	display: flex;
+	align-items: center;
+	gap: 17px;
+	margin-bottom: 25px;
+}
+
+.booking-icon {
+	width: 55px;
+	height: 55px;
+	background: #e9f2ff;
+	color: #2675f5;
+	border-radius: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 25px;
+}
+
+.booking-intro h2 {
+	color: #233751;
+	font-size: 20px;
+	margin-bottom: 5px;
+}
+
+.booking-intro p {
+	color: #8290a5;
+	font-size: 12px;
+}
+
+/* =========================
+   ERROR MESSAGE
+   ========================= */
+.error-message {
+	background: #fff1f1;
+	border: 1px solid #f1caca;
+	color: #c0392b;
+	padding: 13px 16px;
+	border-radius: 8px;
+	font-size: 12px;
+	margin-bottom: 20px;
+}
+
+/* =========================
+   BOOKING FORM
+   ========================= */
+.booking-form {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 14px;
+	box-shadow: 0 5px 20px rgba(30, 48, 72, 0.05);
+	overflow: hidden;
+}
+
+/* =========================
+   FORM SECTION
+   ========================= */
+.form-section {
+	padding: 28px 30px;
+	border-bottom: 1px solid #e8edf3;
+}
+
+.form-section h3 {
+	color: #263a55;
+	font-size: 15px;
+	margin-bottom: 22px;
+	font-weight: 700;
+}
+
+/* =========================
+   FORM ROW
+   ========================= */
+.form-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
+}
+
+/* =========================
+   FORM GROUP
+   ========================= */
+.form-group {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
+}
+
+.form-group:last-child {
+	margin-bottom: 0;
+}
+
+.form-group.full-width {
+	width: 100%;
+}
+
+.form-group label {
+	color: #354963;
+	font-size: 12px;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
+.form-group label span {
+	color: #e55353;
+	margin-left: 2px;
+}
+
+.form-group label span.optional {
+	color: #8b98aa;
+	font-weight: 400;
+	margin-left: 6px;
+}
+
+/* =========================
+   INPUTS
+   ========================= */
+.form-group select, .form-group input, .form-group textarea {
+	width: 100%;
+	border: 1px solid #d8e0ea;
+	border-radius: 8px;
+	background: #ffffff;
+	color: #334861;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	outline: none;
+	transition: 0.2s ease;
+}
+
+.form-group select, .form-group input {
+	height: 45px;
+	padding: 0 13px;
+}
+
+.form-group textarea {
+	padding: 12px 13px;
+	resize: vertical;
+	min-height: 95px;
+	line-height: 1.5;
+}
+
+.form-group select:focus, .form-group input:focus, .form-group textarea:focus
+	{
+	border-color: #2675f5;
+	box-shadow: 0 0 0 3px rgba(38, 117, 245, 0.08);
+}
+
+.form-group select {
+	cursor: pointer;
+}
+
+/* =========================
+   BOOKING INFORMATION
+   ========================= */
+.booking-info {
+	margin: 25px 30px;
+	padding: 16px 18px;
+	background: #f1f7ff;
+	border: 1px solid #dceaff;
+	border-radius: 9px;
+	display: flex;
+	align-items: flex-start;
+	gap: 13px;
+}
+
+.info-icon {
+	width: 25px;
+	height: 25px;
+	min-width: 25px;
+	border-radius: 50%;
+	background: #2675f5;
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+.booking-info strong {
+	display: block;
+	color: #2c4665;
+	font-size: 12px;
+	margin-bottom: 5px;
+}
+
+.booking-info p {
+	color: #6f8199;
+	font-size: 11px;
+	line-height: 1.6;
+}
+
+.booking-info b {
+	color: #2675f5;
+}
+
+/* =========================
+   FORM ACTIONS
+   ========================= */
+.form-actions {
+	padding: 20px 30px;
+	background: #fafbfd;
+	border-top: 1px solid #e8edf3;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+}
+
+.cancel-button, .book-button {
+	height: 42px;
+	padding: 0 22px;
+	border-radius: 7px;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.cancel-button {
+	background: #ffffff;
+	border: 1px solid #d7dfe9;
+	color: #64758b;
+}
+
+.cancel-button:hover {
+	background: #f4f7fa;
+}
+
+.book-button {
+	border: none;
+	background: #2675f5;
+	color: #ffffff;
+	min-width: 145px;
+}
+
+.book-button:hover {
+	background: #1766e6;
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+.main-content footer {
+	margin-top: auto;
+	padding: 20px 35px;
+	text-align: center;
+	border-top: 1px solid #e5eaf1;
+	background: #ffffff;
+}
+
+.main-content footer p {
+	color: #98a4b4;
+	font-size: 10px;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+@media ( max-width : 900px) {
+
+	.booking-section {
+		padding: 0 20px;
+	}
+}
+
+@media ( max-width : 700px) {
+
+	.form-row {
+		grid-template-columns: 1fr;
+		gap: 0;
+	}
+	.booking-section {
+		margin: 25px auto;
+		padding: 0 15px;
+	}
+}
+
+@media ( max-width : 480px) {
+	
+	.booking-intro {
+		align-items: flex-start;
+	}
+	.form-section {
+		padding: 22px 18px;
+	}
+	.booking-info {
+		margin: 20px 18px;
+	}
+	.form-actions {
+		padding: 18px;
+		flex-direction: column-reverse;
+	}
+	.cancel-button, .book-button {
+		width: 100%;
+	}
+	/* =========================
+   SUCCESS MESSAGE
+   ========================= */
+	.success-message {
+		display: flex;
+		align-items: flex-start;
+		gap: 14px;
+		padding: 17px 20px;
+		margin-bottom: 22px;
+		background: #eefbf3;
+		border: 1px solid #c8ecd6;
+		border-radius: 10px;
+	}
+	.success-icon {
+		width: 30px;
+		height: 30px;
+		min-width: 30px;
+		border-radius: 50%;
+		background: #20a45a;
+		color: #ffffff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 16px;
+		font-weight: bold;
+	}
+	.success-content strong {
+		display: block;
+		color: #187543;
+		font-size: 13px;
+		margin-bottom: 5px;
+	}
+	.success-content p {
+		color: #547463;
+		font-size: 11px;
+		line-height: 1.5;
+		margin-bottom: 9px;
+	}
+	.success-link {
+		color: #176ce5;
+		font-size: 11px;
+		font-weight: 700;
+		text-decoration: none;
+	}
+	.success-link:hover {
+		text-decoration: underline;
+	}
+
+	/* =========================
+   SLOT UNAVAILABLE
+   ========================= */
+	.warning-message {
+		display: flex;
+		align-items: flex-start;
+		gap: 14px;
+		padding: 17px 20px;
+		margin-bottom: 22px;
+		background: #fff8e8;
+		border: 1px solid #f1dfae;
+		border-radius: 10px;
+	}
+	.warning-icon {
+		width: 30px;
+		height: 30px;
+		min-width: 30px;
+		border-radius: 50%;
+		background: #e6a817;
+		color: #ffffff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 15px;
+		font-weight: bold;
+	}
+	.warning-content strong {
+		display: block;
+		color: #8a6508;
+		font-size: 13px;
+		margin-bottom: 5px;
+	}
+	.warning-content p {
+		color: #7d6b3d;
+		font-size: 11px;
+		line-height: 1.5;
+	}
+}

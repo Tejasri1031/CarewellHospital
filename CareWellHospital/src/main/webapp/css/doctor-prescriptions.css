@@ -1,0 +1,158 @@
+@charset "UTF-8";
+
+
+.prescription-count {
+    min-width: 175px;
+    padding: 15px 20px;
+    background: #ffffff;
+    border: 1px solid #e4eaf2;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.prescription-count strong {
+    display: block;
+    color: #176ce5;
+    font-size: 23px;
+    margin-bottom: 4px;
+}
+
+.prescription-count span {
+    color: #7b89a1;
+    font-size: 12px;
+}
+
+
+/* =========================
+   TABLE CARD
+   ========================= */
+
+.table-card {
+    background: #ffffff;
+    border: 1px solid #e4eaf2;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 18px rgba(35, 54, 85, 0.05);
+}
+
+.table-header {
+    min-height: 75px;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e8edf4;
+}
+
+.table-header h3 {
+    font-size: 17px;
+    color: #172033;
+    margin-bottom: 5px;
+}
+
+.table-header p {
+    color: #7b89a1;
+    font-size: 12px;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1250px;
+}
+
+thead {
+    background: #f8fafc;
+}
+
+th {
+    height: 52px;
+    padding: 0 18px;
+    text-align: left;
+    color: #60708b;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    font-weight: 700;
+    border-bottom: 1px solid #e5eaf1;
+}
+
+td {
+    padding: 18px;
+    color: #40516d;
+    font-size: 13px;
+    border-bottom: 1px solid #edf1f5;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: 0.2s ease;
+}
+
+tbody tr:hover {
+    background: #f9fbfd;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+td strong {
+    color: #182238;
+    font-weight: 700;
+}
+
+
+/* =========================
+   INSTRUCTIONS
+   ========================= */
+
+.instructions {
+    display: inline-block;
+    max-width: 420px;
+    padding: 7px 11px;
+    background: #eef5ff;
+    color: #176ce5;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: normal;
+    line-height: 1.5;
+}
+
+
+/* =========================
+   NO DATA
+   ========================= */
+
+.no-data {
+    text-align: center;
+    padding: 55px 20px;
+    color: #8996aa;
+    font-size: 14px;
+}
+
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 1200px) {
+
+
+}
+
+
+@media (max-width: 800px) {
+
+ 
+
+    .prescription-count {
+        min-width: 130px;
+    }
+}
