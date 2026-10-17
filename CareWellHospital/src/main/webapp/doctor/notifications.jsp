@@ -7,10 +7,14 @@
 <%@ page import="com.model.Notification" %>
 <%@ page import ="com.model.User" %>
 
+<%@ page import="com.dao.DoctorDAO" %>
+<%@ page import="com.daoimpl.DoctorDAOImpl" %>
+<%@ page import="com.model.Doctor" %>
 
 <%
     // LOGIN CHECK
     User user = (User) session.getAttribute("user");
+
 
     if (user == null || !"DOCTOR".equalsIgnoreCase(user.getRole())) {
         response.sendRedirect(
@@ -21,6 +25,20 @@
 
     int userId = user.getUserId();
 
+    Doctor doctor = null;
+
+    DoctorDAO doctorDAO = new DoctorDAOImpl();
+    List<Doctor> doctors = doctorDAO.getAllDoctors();
+
+    if (doctors != null) {
+        for (Doctor item : doctors) {
+            if (item.getUserId() == userId) {
+                doctor = item;
+                break;
+            }
+        }
+    }
+    
     NotificationDAO notificationDAO =
             new NotificationDAOImpl();
 
@@ -54,10 +72,13 @@
       href="${pageContext.request.contextPath}/css/style.css">
 
 <link rel="stylesheet"
-      href="${pageContext.request.contextPath}/css/doctor-common.css">
+      href="<%= request.getContextPath() %>/css/doctor-common.css">
 
 <link rel="stylesheet"
       href="${pageContext.request.contextPath}/css/doctor-notification.css">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/doctor-dashboard.css">
 
     
 </head>
@@ -230,29 +251,53 @@
 
             </div>
 
+				<div class="doctor-account-menu">
 
-            <div class="doctor-info">
+    <button type="button"
+            class="user-profile doctor-profile-trigger"
+            id="doctorProfileTrigger"
+            aria-expanded="false"
+            aria-controls="doctorProfileDropdown">
 
-                <div class="doctor-avatar">
-                    <%= user.getFullName()
-                           .substring(0, 1)
-                           .toUpperCase() %>
-                </div>
+       <div class="avatar">
+    <%= (user.getFullName() != null && !user.getFullName().trim().isEmpty())
+            ? user.getFullName().trim().substring(0, 1).toUpperCase()
+            : "D" %>
+</div>
 
+<div class="user-info">
+    <strong><%= user.getFullName() != null
+            ? user.getFullName() : "Doctor" %></strong>
 
-                <div>
+    <span><%= doctor.getSpecialization() != null
+            ? doctor.getSpecialization() : "" %></span>
+</div>
 
-                    <strong>
-                        <%= user.getFullName() %>
-                    </strong>
+        <span class="doctor-chevron" aria-hidden="true">⌄</span>
+    </button>
 
-                    <span>
-                        Doctor
-                    </span>
+    <div class="doctor-dropdown" id="doctorProfileDropdown" hidden>
 
-                </div>
+        <a class="doctor-dropdown-item"
+           href="<%= request.getContextPath() %>/doctor/profile.jsp">
+            ✏️ <span>Update Details</span>
+        </a>
 
-            </div>
+        <a class="doctor-dropdown-item"
+           href="<%= request.getContextPath() %>/doctor/change-password.jsp">
+            🔒 <span>Change Password</span>
+        </a>
+
+        <div class="doctor-dropdown-divider"></div>
+
+        <a class="doctor-dropdown-item logout-item"
+           href="<%= request.getContextPath() %>/LogoutController">
+            🚪 <span>Logout</span>
+        </a>
+
+    </div>
+</div>
+				
 
 
         </header>
@@ -368,6 +413,55 @@
 </div>
 
 
-</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const profileButton = document.getElementById("doctorProfileTrigger");
+    const profileDropdown = document.getElementById("doctorProfileDropdown");
 
+    if (!profileButton || !profileDropdown) {
+        console.error("Doctor profile dropdown elements were not found.");
+        return;
+    }
+
+    function openDropdown() {
+        profileDropdown.hidden = false;
+        profileButton.setAttribute("aria-expanded", "true");
+    }
+
+    function closeDropdown() {
+        profileDropdown.hidden = true;
+        profileButton.setAttribute("aria-expanded", "false");
+    }
+
+    profileButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (profileDropdown.hidden) {
+            openDropdown();
+        } else {
+            closeDropdown();
+        }
+    });
+
+    profileDropdown.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileButton.contains(event.target) &&
+            !profileDropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeDropdown();
+            profileButton.focus();
+        }
+    });
+});
+</script>
+</body>
 </html>

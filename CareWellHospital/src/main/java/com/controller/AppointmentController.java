@@ -131,95 +131,125 @@ public class AppointmentController extends HttpServlet {
 
                 int doctorId = loggedDoctor.getDoctorId();
 
-                String filter = request.getParameter("filter");
-                String status = request.getParameter("status");
-                String dateFilter = request.getParameter("dateFilter");
-                String customDateText = request.getParameter("appointmentDate");
 
-                // Keep compatibility with the existing dashboard link: filter=today.
-                if ((dateFilter == null || dateFilter.trim().isEmpty())
-                        && "today".equalsIgnoreCase(filter)) {
-                    dateFilter = "TODAY";
-                }
-                if (dateFilter == null || dateFilter.trim().isEmpty()) {
-                    dateFilter = "ALL";
-                }
-                dateFilter = dateFilter.trim().toUpperCase();
+String filter = request.getParameter("filter");
 
-                if (status != null) {
-                    status = status.trim().toUpperCase();
-                    if (!"PENDING".equals(status)
-                            && !"CONFIRMED".equals(status)
-                            && !"CANCELLED".equals(status)
-                            && !"COMPLETED".equals(status)
-                            && !"ALL".equals(status)) {
-                        status = "ALL";
-                    }
-                } else {
-                    status = "ALL";
-                }
+String status = request.getParameter("status");
+String dateFilter = request.getParameter("dateFilter");
+String customDateText = request.getParameter("appointmentDate");
 
-                LocalDate today = LocalDate.now();
-                LocalDate selectedDate = null;
-                if ("CUSTOM".equals(dateFilter)) {
-                    if (customDateText == null || customDateText.trim().isEmpty()) {
-                        dateFilter = "ALL";
-                    } else {
-                        selectedDate = LocalDate.parse(customDateText.trim());
-                    }
-                }
+// Normalize status
+if (status == null || status.trim().isEmpty()) {
+    status = "ALL";
+} else {
+    status = status.trim().toUpperCase();
+}
 
-                // Fetch only the logged-in doctor's appointments first.
-                List<AppointmentDetails> allDoctorAppointments =
-                        appointmentDetailsDAO.getAppointmentDetailsByDoctor(doctorId);
-                List<AppointmentDetails> appointments = new ArrayList<>();
+if (!status.equals("ALL")
+        && !status.equals("PENDING")
+        && !status.equals("CONFIRMED")
+        && !status.equals("CANCELLED")
+        && !status.equals("COMPLETED")) {
+    status = "ALL";
+}
 
-                for (AppointmentDetails appointment : allDoctorAppointments) {
-                    if (appointment == null || appointment.getAppointmentDate() == null) {
-                        continue;
-                    }
+// Normalize date filter
+if (dateFilter == null || dateFilter.trim().isEmpty()) {
+    dateFilter = "today".equalsIgnoreCase(filter)
+            ? "TODAY" : "ALL";
+} else {
+    dateFilter = dateFilter.trim().toUpperCase();
+}
 
-                    LocalDate appointmentDay = appointment.getAppointmentDate().toLocalDate();
-                    String appointmentStatus = appointment.getStatus() == null
-                            ? "" : appointment.getStatus().trim().toUpperCase();
+if (!dateFilter.equals("ALL")
+        && !dateFilter.equals("TODAY")
+        && !dateFilter.equals("UPCOMING")
+        && !dateFilter.equals("PAST")
+        && !dateFilter.equals("CUSTOM")) {
+    dateFilter = "ALL";
+}
 
-                    boolean statusMatches = "ALL".equals(status)
-                            || status.equals(appointmentStatus);
-                    boolean dateMatches;
+LocalDate today = LocalDate.now();
+LocalDate selectedDate = null;
 
-                    switch (dateFilter) {
-                        case "TODAY":
-                            dateMatches = appointmentDay.equals(today);
-                            break;
-                        case "UPCOMING":
-                            dateMatches = appointmentDay.isAfter(today);
-                            break;
-                        case "PAST":
-                            dateMatches = appointmentDay.isBefore(today);
-                            break;
-                        case "CUSTOM":
-                            dateMatches = selectedDate != null
-                                    && appointmentDay.equals(selectedDate);
-                            break;
-                        default:
-                            dateMatches = true;
-                            break;
-                    }
+// Validate custom date safely
+if ("CUSTOM".equals(dateFilter)) {
+    try {
+        if (customDateText != null
+                && !customDateText.trim().isEmpty()) {
+            selectedDate = LocalDate.parse(customDateText.trim());
+        } else {
+            dateFilter = "ALL";
+        }
+    } catch (java.time.format.DateTimeParseException ex) {
+        dateFilter = "ALL";
+        customDateText = "";
+    }
+}
 
-                    if (statusMatches && dateMatches) {
-                        appointments.add(appointment);
-                    }
-                }
+// Load appointments for this doctor only
+List<AppointmentDetails> allDoctorAppointments =
+        appointmentDetailsDAO.getAppointmentDetailsByDoctor(doctorId);
 
-                request.setAttribute("appointments", appointments);
-                request.setAttribute("selectedFilter", filter);
-                request.setAttribute("selectedStatus", status);
-                request.setAttribute("selectedDateFilter", dateFilter);
-                request.setAttribute("selectedAppointmentDate", customDateText);
+List<AppointmentDetails> appointments = new ArrayList<>();
 
-                request.getRequestDispatcher(
-                        "/doctor/appointments.jsp").forward(request, response);    
-          
+for (AppointmentDetails appointment : allDoctorAppointments) {
+
+    if (appointment == null || appointment.getAppointmentDate() == null) {
+        continue;
+    }
+
+    LocalDate appointmentDay =
+            appointment.getAppointmentDate().toLocalDate();
+
+    String appointmentStatus = appointment.getStatus() == null
+            ? ""
+            : appointment.getStatus().trim().toUpperCase();
+
+    boolean statusMatches =
+            "ALL".equals(status)
+            || status.equals(appointmentStatus);
+
+    boolean dateMatches;
+
+    switch (dateFilter) {
+        case "TODAY":
+            dateMatches = appointmentDay.equals(today);
+            break;
+
+        case "UPCOMING":
+            dateMatches = appointmentDay.isAfter(today);
+            break;
+
+        case "PAST":
+            dateMatches = appointmentDay.isBefore(today);
+            break;
+
+        case "CUSTOM":
+            dateMatches = selectedDate != null
+                    && appointmentDay.equals(selectedDate);
+            break;
+
+        default:
+            dateMatches = true;
+            break;
+    }
+
+    if (statusMatches && dateMatches) {
+        appointments.add(appointment);
+    }
+}
+
+// Send filtered results and selected values to JSP
+request.setAttribute("appointments", appointments);
+request.setAttribute("selectedFilter", filter);
+request.setAttribute("selectedStatus", status);
+request.setAttribute("selectedDateFilter", dateFilter);
+request.setAttribute("selectedAppointmentDate", customDateText);
+
+request.getRequestDispatcher("/doctor/appointments.jsp")
+       .forward(request, response);
+
 
             }
             // ADMIN - APPOINTMENTS BY DATE

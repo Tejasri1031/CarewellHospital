@@ -15,6 +15,7 @@ import com.daoimpl.UserDAOImpl;
 import com.daoimpl.PatientDAOImpl;
 import com.model.User;
 import com.model.Patient;
+import com.util.PasswordUtil;
 
 @WebServlet("/register")
 public class RegisterController extends HttpServlet {
@@ -73,7 +74,7 @@ public class RegisterController extends HttpServlet {
 
             user.setFullName(fullName);
             user.setEmail(email);
-            user.setPassword(password);
+            user.setPassword(PasswordUtil.hashPassword(password));
             user.setPhone(phone);
             user.setRole("PATIENT");
             user.setStatus("ACTIVE");

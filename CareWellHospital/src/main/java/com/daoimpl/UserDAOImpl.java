@@ -185,4 +185,26 @@ public class UserDAOImpl implements UserDAO {
 
         return false;
     }
+
+@Override
+public boolean updatePassword(int userId, String hashedPassword) {
+
+    String sql = "UPDATE users SET password = ? WHERE user_id = ?";
+
+    try (Connection connection = DBConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setString(1, hashedPassword);
+        statement.setInt(2, userId);
+
+        return statement.executeUpdate() > 0;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
+
+
 }

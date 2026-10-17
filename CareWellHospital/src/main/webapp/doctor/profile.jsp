@@ -57,7 +57,11 @@
 
    <!-- Shared Doctor Portal CSS -->
 <link rel="stylesheet"
-      href="${pageContext.request.contextPath}/css/doctor-common.css">
+      href="<%= request.getContextPath() %>/css/doctor-common.css">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/doctor-dashboard.css">
+
 
 <!-- Doctor Profile page -->
 <link rel="stylesheet"
@@ -161,26 +165,50 @@
                 </p>
 
             </div>
+<div class="doctor-account-menu">
 
-            <div class="doctor-header">
+    <button type="button"
+            class="user-profile doctor-profile-trigger"
+            id="doctorProfileTrigger"
+            aria-expanded="false"
+            aria-controls="doctorProfileDropdown">
 
-                <div class="doctor-avatar">
-                    D
-                </div>
+       <div class="avatar">
+    <%= (user.getFullName() != null && !user.getFullName().trim().isEmpty())
+            ? user.getFullName().trim().substring(0, 1).toUpperCase()
+            : "D" %>
+</div>
 
-                <div>
+<div class="user-info">
+    <strong><%= user.getFullName() != null
+            ? user.getFullName() : "Doctor" %></strong>
 
-                    <strong>
-                        <%= user.getFullName() %>
-                    </strong>
+    <span><%= doctor.getSpecialization() != null
+            ? doctor.getSpecialization() : "" %></span>
+</div>
 
-                    <span>
-                        <%= doctor.getSpecialization() %>
-                    </span>
+        <span class="doctor-chevron" aria-hidden="true">⌄</span>
+    </button>
 
-                </div>
+    <div class="doctor-dropdown" id="doctorProfileDropdown" hidden>
 
-            </div>
+        <a class="doctor-dropdown-item"
+           href="<%= request.getContextPath() %>/doctor/update-details.jsp" class="doctor-dropdown-item">✏️<span>Update Details</span></a>
+   
+        <a class="doctor-dropdown-item"
+           href="<%= request.getContextPath() %>/doctor/change-password.jsp">
+            🔒 <span>Change Password</span>
+        </a>
+
+        <div class="doctor-dropdown-divider"></div>
+
+        <a class="doctor-dropdown-item logout-item"
+           href="<%= request.getContextPath() %>/LogoutController">
+            🚪 <span>Logout</span>
+        </a>
+
+    </div>
+</div>
 
         </header>
 
@@ -403,5 +431,56 @@
 
 </div>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const profileButton = document.getElementById("doctorProfileTrigger");
+    const profileDropdown = document.getElementById("doctorProfileDropdown");
+
+    if (!profileButton || !profileDropdown) {
+        console.error("Doctor profile dropdown elements were not found.");
+        return;
+    }
+
+    function openDropdown() {
+        profileDropdown.hidden = false;
+        profileButton.setAttribute("aria-expanded", "true");
+    }
+
+    function closeDropdown() {
+        profileDropdown.hidden = true;
+        profileButton.setAttribute("aria-expanded", "false");
+    }
+
+    profileButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (profileDropdown.hidden) {
+            openDropdown();
+        } else {
+            closeDropdown();
+        }
+    });
+
+    profileDropdown.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileButton.contains(event.target) &&
+            !profileDropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeDropdown();
+            profileButton.focus();
+        }
+    });
+});
+</script>
 </body>
 </html>

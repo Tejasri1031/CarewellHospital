@@ -17,4 +17,6 @@ public interface UserDAO {
     boolean updateUser(User user);
 
     boolean deleteUser(int userId);
+    
+    boolean updatePassword(int userId, String hashedPassword);
 }

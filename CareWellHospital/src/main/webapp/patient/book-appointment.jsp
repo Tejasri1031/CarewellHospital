@@ -226,12 +226,17 @@
             </div>
 
 
-            <div class="header-right">
+           <a href="<%= request.getContextPath() %>/patient/profile.jsp"
+               class="patient-info">
 
-                <div class="patient-info">
+                <div class="patient-avatar">
+                   <%= user.getFullName().substring(0, 1).toUpperCase() %>
+                </div>
+
+                <div>
 
                     <strong>
-                        <%= user.getFullName() %>
+                      <%= user.getFullName() %>
                     </strong>
 
                     <span>
@@ -240,7 +245,8 @@
 
                 </div>
 
-            </div>
+            </a>
+           
 
         </header>
 

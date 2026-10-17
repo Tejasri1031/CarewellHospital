@@ -129,8 +129,12 @@
 
     <title>Prescriptions | CareWell Hospital</title>
 
-   <link rel="stylesheet"
-      href="${pageContext.request.contextPath}/css/doctor-common.css">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/doctor-common.css">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/doctor-dashboard.css">
 
 <link rel="stylesheet"
       href="${pageContext.request.contextPath}/css/doctor-prescriptions.css">
@@ -241,29 +245,28 @@
             </div>
 
 
-            <div class="doctor-info">
-
-
-                <div class="doctor-avatar">
-
-                    <%= firstLetter %>
-
+            <div class="doctor-account-menu">
+                <button type="button"
+                        class="user-profile doctor-profile-trigger"
+                        id="doctorProfileTrigger"
+                        aria-expanded="false"
+                        aria-controls="doctorProfileDropdown">
+                    <div class="avatar"><%= firstLetter %></div>
+                    <div class="user-info">
+                        <strong><%= doctorName == null ? "Doctor" : doctorName %></strong>
+                        <span><%= doctor.getSpecialization() == null ? "" : doctor.getSpecialization() %></span>
+                    </div>
+                    <span class="doctor-chevron" aria-hidden="true">⌄</span>
+                </button>
+                <div class="doctor-dropdown" id="doctorProfileDropdown" hidden>
+                    <a class="doctor-dropdown-item"
+                       href="<%= request.getContextPath() %>/doctor/profile.jsp">✏️ <span>Update Details</span></a>
+                    <a class="doctor-dropdown-item"
+                       href="<%= request.getContextPath() %>/doctor/change-password.jsp">🔒 <span>Change Password</span></a>
+                    <div class="doctor-dropdown-divider"></div>
+                    <a class="doctor-dropdown-item logout-item"
+                       href="<%= request.getContextPath() %>/LogoutController">🚪 <span>Logout</span></a>
                 </div>
-
-
-                <div>
-
-                    <strong>
-                        <%= doctorName %>
-                    </strong>
-
-                    <span>
-                        <%= doctor.getSpecialization() %>
-                    </span>
-
-                </div>
-
-
             </div>
 
 
@@ -579,6 +582,56 @@
 </div>
 
 
-</body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const profileButton = document.getElementById("doctorProfileTrigger");
+    const profileDropdown = document.getElementById("doctorProfileDropdown");
 
+    if (!profileButton || !profileDropdown) {
+        console.error("Doctor profile dropdown elements were not found.");
+        return;
+    }
+
+    function openDropdown() {
+        profileDropdown.hidden = false;
+        profileButton.setAttribute("aria-expanded", "true");
+    }
+
+    function closeDropdown() {
+        profileDropdown.hidden = true;
+        profileButton.setAttribute("aria-expanded", "false");
+    }
+
+    profileButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (profileDropdown.hidden) {
+            openDropdown();
+        } else {
+            closeDropdown();
+        }
+    });
+
+    profileDropdown.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileButton.contains(event.target) &&
+            !profileDropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeDropdown();
+            profileButton.focus();
+        }
+    });
+});
+</script>
+</body>
 </html>
+

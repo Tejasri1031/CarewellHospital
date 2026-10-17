@@ -1,287 +1,797 @@
 @charset "UTF-8";
 
-/* ==============================
-   FORM CARDS
-============================== */
+/* CareWell - Add Prescription page
 
-.form-card {
-    margin-bottom: 24px;
-    padding: 28px;
-    background: #ffffff;
-    border: 1px solid #e6ecf4;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(28, 53, 86, 0.035);
-}
+   Matches the existing classes in add-prescription.jsp. */
 
-.form-card > h3 {
-    margin-bottom: 24px;
-    color: #20344f;
-    font-size: 17px;
-    font-weight: 700;
-}
+#prescriptionForm {
 
-.section-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 24px;
-}
+    box-sizing: border-box;
 
-.section-heading h3 {
-    color: #20344f;
-    font-size: 17px;
-}
-
-.section-heading p {
-    margin-top: 6px;
-    color: #8290a3;
-    font-size: 12px;
-}
-
-/* ==============================
-   INPUTS AND LABELS
-============================== */
-
-.form-group {
-    margin-bottom: 22px;
-}
-
-.form-group:last-child {
-    margin-bottom: 0;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 9px;
-    color: #344761;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
     width: 100%;
-    min-height: 46px;
-    padding: 12px 14px;
-    border: 1px solid #dce5f0;
-    border-radius: 8px;
-    outline: none;
-    background: #ffffff;
-    color: #26364b;
-    font-family: inherit;
-    font-size: 13px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    max-width: 1180px;
+
+    margin: 0 auto;
+
 }
 
-.form-group textarea {
-    min-height: 95px;
-    resize: vertical;
-    line-height: 1.6;
+#prescriptionForm .form-card {
+
+    box-sizing: border-box;
+
+    width: 100%;
+
+    margin: 0 0 24px;
+
+    padding: 28px;
+
+    background: #fff;
+
+    border: 1px solid #e3eaf3;
+
+    border-radius: 15px;
+
+    box-shadow: 0 5px 20px rgba(28, 53, 86, 0.045);
+
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #2878ef;
-    box-shadow: 0 0 0 3px rgba(40, 120, 239, 0.10);
+#prescriptionForm .form-card > h3 {
+
+    margin: 0 0 22px;
+
+    color: #20344f;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
 }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: #a1adbd;
-}
+#prescriptionForm .section-heading {
 
-.field-note {
-    margin-top: 8px;
-    color: #8290a3;
-    font-size: 11px;
-    line-height: 1.5;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-}
-
-/* ==============================
-   MEDICINE ENTRIES
-============================== */
-
-.medicine-entry {
-    margin-bottom: 20px;
-    padding: 22px;
-    border: 1px solid #e1e9f3;
-    border-radius: 12px;
-    background: #fbfdff;
-}
-
-.medicine-entry:last-child {
-    margin-bottom: 0;
-}
-
-.medicine-entry-header {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 22px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid #e7edf5;
+
+    gap: 18px;
+
+    margin-bottom: 24px;
+
 }
 
-.medicine-entry-header h4 {
-    color: #2878ef;
-    font-size: 14px;
+#prescriptionForm .section-heading h3 {
+
+    margin: 0 0 6px;
+
+    color: #20344f;
+
+    font-size: 18px;
+
     font-weight: 700;
+
 }
 
-.remove-medicine {
-    padding: 7px 12px;
-    border: 1px solid #f1caca;
-    border-radius: 7px;
-    background: #fff5f5;
-    color: #c34242;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
+#prescriptionForm .section-heading p {
+
+    margin: 0;
+
+    color: #8290a3;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
 }
 
-.remove-medicine:hover {
-    background: #ffe8e8;
+#prescriptionForm .form-group {
+
+    min-width: 0;
+
+    margin: 0 0 20px;
+
 }
 
-/* ==============================
-   BUTTONS
-============================== */
+#prescriptionForm .form-group:last-child {
 
-.primary-button,
-.secondary-button,
-.cancel-button {
-    min-height: 44px;
-    padding: 0 20px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    font-family: inherit;
+    margin-bottom: 0;
+
+}
+
+#prescriptionForm .form-group label {
+
+    display: block;
+
+    margin: 0 0 8px;
+
+    color: #344761;
+
     font-size: 12px;
+
     font-weight: 700;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+
+    line-height: 1.4;
+
 }
 
-.primary-button {
-    border: 1px solid #2878ef;
-    background: #2878ef;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(40, 120, 239, 0.16);
-}
+#prescriptionForm .form-group input,
 
-.primary-button:hover {
-    background: #1766d8;
-    transform: translateY(-1px);
-}
+#prescriptionForm .form-group select,
 
-.secondary-button {
-    border: 1px solid #cbdcf7;
-    background: #f0f6ff;
-    color: #2878ef;
-}
+#prescriptionForm .form-group textarea {
 
-.secondary-button:hover {
-    background: #e2edff;
-}
+    display: block;
 
-.cancel-button {
+    box-sizing: border-box;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    min-height: 46px;
+
+    padding: 11px 13px;
+
     border: 1px solid #dce5f0;
-    background: #ffffff;
-    color: #617188;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background: #fff;
+
+    color: #26364b;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
 }
 
-.cancel-button:hover {
-    background: #f4f7fb;
+#prescriptionForm .form-group textarea {
+
+    min-height: 100px;
+
+    resize: vertical;
+
 }
 
-.form-actions {
+#prescriptionForm .form-group input_:focus_,
+
+#prescriptionForm .form-group select_:focus_,
+
+#prescriptionForm .form-group textarea_:focus_ {
+
+    border-color: #2878ef;
+
+    box-shadow: 0 0 0 3px rgba(40, 120, 239, 0.11);
+
+}
+
+#prescriptionForm .form-group input_::placeholder_,
+
+#prescriptionForm .form-group textarea_::placeholder_ {
+
+    color: #9aa8ba;
+
+}
+
+#prescriptionForm .field-note {
+
+    margin: 8px 0 0;
+
+    color: #8290a3;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+
+}
+
+#prescriptionForm #appointmentId {
+
+    width: 100%;
+
+}
+
+#prescriptionForm .form-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 0 18px;
+
+}
+
+#prescriptionForm .medicine-entry {
+
+    box-sizing: border-box;
+
+    width: 100%;
+
+    margin: 0 0 18px;
+
+    padding: 22px;
+
+    border: 1px solid #e1e9f3;
+
+    border-radius: 12px;
+
+    background: #fbfdff;
+
+}
+
+#prescriptionForm .medicine-entry:last-child {
+
+    margin-bottom: 0;
+
+}
+
+#prescriptionForm .medicine-entry-header {
+
     display: flex;
+
     align-items: center;
-    justify-content: flex-end;
+
+    justify-content: space-between;
+
     gap: 12px;
-    margin-top: 8px;
+
+    margin: 0 0 20px;
+
+    padding: 0 0 14px;
+
+    border-bottom: 1px solid #e7edf5;
+
 }
 
-/* ==============================
-   ERROR MESSAGE
-============================== */
+#prescriptionForm .medicine-entry-header h4 {
+
+    margin: 0;
+
+    color: #2878ef;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+#prescriptionForm .remove-medicine {
+
+    min-height: 34px;
+
+    padding: 7px 12px;
+
+    border: 1px solid #f1caca;
+
+    border-radius: 7px;
+
+    background: #fff5f5;
+
+    color: #c34242;
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+#prescriptionForm .remove-medicine:hover {
+
+    background: #ffe8e8;
+
+}
+
+#prescriptionForm .remove-medicine[hidden] {
+
+    display: none !important;
+
+}
+
+#prescriptionForm _.primary-button_,
+
+#prescriptionForm _.secondary-button_,
+
+#prescriptionForm .cancel-button {
+
+    box-sizing: border-box;
+
+    min-height: 44px;
+
+    padding: 0 20px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease, transform 0.2s ease;
+
+}
+
+#prescriptionForm .primary-button {
+
+    border: 1px solid #2878ef;
+
+    background: #2878ef;
+
+    color: #fff;
+
+    box-shadow: 0 4px 12px rgba(40, 120, 239, 0.16);
+
+}
+
+#prescriptionForm .primary-button:hover {
+
+    background: #1766d8;
+
+    transform: translateY(-1px);
+
+}
+
+#prescriptionForm .secondary-button {
+
+    border: 1px solid #cbdcf7;
+
+    background: #f0f6ff;
+
+    color: #2878ef;
+
+}
+
+#prescriptionForm .secondary-button:hover {
+
+    background: #e2edff;
+
+}
+
+#prescriptionForm .cancel-button {
+
+    border: 1px solid #dce5f0;
+
+    background: #fff;
+
+    color: #617188;
+
+}
+
+#prescriptionForm .cancel-button:hover {
+
+    background: #f4f7fb;
+
+}
+
+#prescriptionForm .form-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    margin: 0 0 24px;
+
+}
 
 .error-message {
-    margin-bottom: 20px;
+
+    margin: 0 0 20px;
+
     padding: 14px 17px;
+
     border: 1px solid #f3c7c7;
+
     border-radius: 9px;
+
     background: #fff3f3;
+
     color: #b83232;
+
     font-size: 13px;
+
     line-height: 1.5;
+
 }
 
-
-/* ==============================
-   RESPONSIVE DESIGN
-============================== */
-
 @media (max-width: 1000px) {
-   
 
-    .form-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    #prescriptionForm .form-card {
+
+        padding: 24px;
+
     }
+
+    #prescriptionForm .form-grid {
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    }
+
 }
 
 @media (max-width: 760px) {
-    
-    .form-card {
-        padding: 22px;
+
+    #prescriptionForm .form-card {
+
+        padding: 20px;
+
     }
 
-    .form-grid {
-        grid-template-columns: 1fr;
-        gap: 0;
+    #prescriptionForm .section-heading {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
     }
+
+    #prescriptionForm .form-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 0;
+
+    }
+
 }
 
 @media (max-width: 560px) {
-     
 
-    .content-area {
-        padding-top: 24px;
-    }
+    #prescriptionForm .form-card {
 
-    .form-card {
-        padding: 18px;
-    }
-
-    .section-heading {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .medicine-entry {
         padding: 16px;
+
+        border-radius: 11px;
+
     }
 
-    .form-actions {
+    #prescriptionForm .medicine-entry {
+
+        padding: 15px;
+
+    }
+
+    #prescriptionForm .form-actions {
+
         align-items: stretch;
+
         flex-direction: column-reverse;
+
     }
 
-    .primary-button,
-    .cancel-button {
+    #prescriptionForm _.primary-button_,
+
+    #prescriptionForm _.secondary-button_,
+
+    #prescriptionForm .cancel-button {
+
         width: 100%;
+
     }
+
+}
+
+/* ==============================
+
+   DOCTOR PROFILE DROPDOWN
+
+   Fixes the default grey browser button and plain links.
+
+============================== */
+
+.doctor-account-menu {
+
+    position: relative;
+
+    display: inline-block;
+
+    flex: 0 0 auto;
+
+    z-index: 1000;
+
+}
+
+.doctor-account-menu .doctor-profile-trigger {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 12px;
+
+    min-width: 220px;
+
+    max-width: 320px;
+
+    padding: 8px 12px;
+
+    border: 1px solid transparent;
+
+    border-radius: 12px;
+
+    background: transparent;
+
+    color: #20344f;
+
+    font: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    box-shadow: none;
+
+}
+
+.doctor-account-menu _.doctor-profile-trigger:hover_,
+
+.doctor-account-menu .doctor-profile-trigger:focus-visible {
+
+    background: #f4f8fd;
+
+    border-color: #e2eaf4;
+
+    outline: none;
+
+}
+
+.doctor-account-menu .avatar {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 44px;
+
+    width: 44px;
+
+    height: 44px;
+
+    border-radius: 50%;
+
+    background: linear-gradient(135deg, #2878ef, #08a5c5);
+
+    color: #fff;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+}
+
+.doctor-account-menu .user-info {
+
+    display: flex;
+
+    flex: 1 1 auto;
+
+    min-width: 0;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+}
+
+.doctor-account-menu .user-info strong {
+
+    display: block;
+
+    overflow: hidden;
+
+    color: #172b46;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.35;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+.doctor-account-menu .user-info span {
+
+    display: block;
+
+    overflow: hidden;
+
+    color: #8290a3;
+
+    font-size: 11px;
+
+    line-height: 1.35;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+}
+
+.doctor-account-menu .doctor-chevron {
+
+    flex: 0 0 auto;
+
+    margin-left: 4px;
+
+    color: #74839a;
+
+    font-size: 16px;
+
+    transition: transform .2s ease;
+
+}
+
+.doctor-account-menu .doctor-profile-trigger[aria-expanded="true"] .doctor-chevron {
+
+    transform: rotate(180deg);
+
+}
+
+.doctor-account-menu .doctor-dropdown {
+
+    position: absolute;
+
+    top: calc(100% + 8px);
+
+    right: 0;
+
+    z-index: 2000;
+
+    width: 230px;
+
+    padding: 8px;
+
+    border: 1px solid #e1e8f1;
+
+    border-radius: 12px;
+
+    background: #fff;
+
+    box-shadow: 0 14px 35px rgba(22, 42, 68, .16);
+
+}
+
+.doctor-account-menu .doctor-dropdown[hidden] {
+
+    display: none !important;
+
+}
+
+.doctor-account-menu .doctor-dropdown-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 11px 12px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    color: #344761;
+
+    background: transparent;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+
+    text-align: left;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+}
+
+.doctor-account-menu _.doctor-dropdown-item:hover_,
+
+.doctor-account-menu .doctor-dropdown-item:focus-visible {
+
+    background: #f0f6ff;
+
+    color: #1766d8;
+
+    outline: none;
+
+}
+
+.doctor-account-menu .doctor-dropdown-item.logout-item {
+
+    color: #c34242;
+
+}
+
+.doctor-account-menu .doctor-dropdown-item.logout-item:hover {
+
+    background: #fff3f3;
+
+    color: #b83232;
+
+}
+
+.doctor-account-menu .doctor-dropdown-divider {
+
+    height: 1px;
+
+    margin: 6px 4px;
+
+    background: #e8edf4;
+
+}
+
+@media (max-width: 560px) {
+
+    .doctor-account-menu .doctor-profile-trigger {
+
+        min-width: 0;
+
+        max-width: 230px;
+
+        gap: 8px;
+
+        padding: 6px;
+
+    }
+
+    .doctor-account-menu .avatar {
+
+        flex-basis: 38px;
+
+        width: 38px;
+
+        height: 38px;
+
+    }
+
+    .doctor-account-menu .doctor-dropdown {
+
+        right: 0;
+
+        width: 215px;
+
+    }
+
 }

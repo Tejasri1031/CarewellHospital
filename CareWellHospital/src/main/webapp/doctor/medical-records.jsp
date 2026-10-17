@@ -35,51 +35,15 @@ String firstLetter = doctorName != null && !doctorName.isEmpty()
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Medical Records | CareWell Hospital</title>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/doctor-common.css">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/doctor-common.css">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/doctor-dashboard.css">
+      
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/doctor-medical-records.css">
-<style>
-.content-area{padding-top:24px}
-.page-title{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}
-.page-title h2{margin:0 0 6px}.page-title p{margin:0}
-.record-count{flex:0 0 auto;min-width:125px;padding:13px 18px}
-.records-list{display:grid;grid-template-columns:1fr;gap:16px}
-.record-card{background:#fff;border:1px solid #e4eaf2;border-radius:14px;overflow:hidden;box-shadow:0 4px 15px rgba(35,54,85,.045)}
-.record-card-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 20px;border-bottom:1px solid #e8edf4;background:#fbfcfe}
-.record-identity{display:flex;align-items:center;gap:12px;min-width:0}
-.record-icon{width:38px;height:38px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#eef5ff;color:#176ce5;font-size:19px;font-weight:700}
-.record-identity h3{margin:0 0 4px;color:#182238;font-size:15px}
-.record-identity p{margin:0;color:#7b89a1;font-size:12px}
-.patient-block{text-align:right;min-width:0}.patient-block span{display:block;margin-bottom:4px;color:#8996aa;font-size:10px;font-weight:700;letter-spacing:.7px}.patient-block strong{color:#176ce5;font-size:12px;overflow-wrap:anywhere}
-.record-body{padding:17px 20px 19px}
-.main-details{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
-.detail-label{margin:0 0 7px;color:#71819a;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
-.detail-box{padding:11px 13px;background:#f8fafc;border:1px solid #e4eaf2;border-radius:8px;color:#40516d;font-size:13px;line-height:1.5;overflow-wrap:anywhere;min-height:42px}
-.diagnosis-box{border-left:3px solid #19a974;background:#eff8f3;color:#14784f;font-weight:600}
-.vitals-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
-.vital-box{padding:10px 12px;background:#f8fafc;border:1px solid #e4eaf2;border-radius:8px;min-width:0}
-.vital-box span{display:block;color:#7b89a1;font-size:11px;margin-bottom:4px}.vital-box strong{color:#182238;font-size:13px;overflow-wrap:anywhere}
-.section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 9px}
-.section-heading h4{margin:0;color:#71819a;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
-.section-heading span{color:#8996aa;font-size:11px}
-.prescriptions-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:11px;align-items:start}
-.prescription-card{min-width:0;padding:12px;background:#fbfcfe;border:1px solid #e2eaf4;border-radius:9px}
-.prescription-card h5{margin:0 0 5px;color:#176ce5;font-size:13px}
-.prescription-date{margin:0 0 9px;color:#7b89a1;font-size:11px}
-.medicine-list{display:grid;grid-template-columns:1fr;gap:7px}
-.medicine-item{padding:9px 10px;background:#fff;border:1px solid #e8edf4;border-radius:7px;min-width:0}
-.medicine-item>strong{display:block;margin-bottom:5px;color:#182238;font-size:12px;overflow-wrap:anywhere}
-.medicine-item p{margin:3px 0;color:#40516d;font-size:11px;line-height:1.45;overflow-wrap:anywhere}
-.general-instructions{margin-top:9px;padding-top:8px;border-top:1px solid #e8edf4;color:#40516d;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
-.doctor-notes{display:flex;gap:10px;margin-top:14px;padding:11px 13px;border:1px solid #dbe9ff;border-radius:9px;background:#f2f7ff}
-.doctor-notes strong{display:block;margin-bottom:4px;color:#526b8c;font-size:10px;letter-spacing:.7px;text-transform:uppercase}
-.doctor-notes p{margin:0;color:#40516d;font-size:12px;line-height:1.5}
-.no-prescription{padding:12px;border:1px dashed #d9e1ec;border-radius:8px;color:#8996aa;font-size:12px}
-.empty-state{padding:40px 20px;text-align:center;color:#8996aa}
-.empty-state strong{display:block;margin-bottom:6px;color:#40516d}
-footer{padding:18px 0 4px;text-align:center;color:#8996aa;font-size:11px}
-@media(max-width:850px){.main-details{grid-template-columns:1fr}.vitals-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:600px){.content-area{padding:15px}.page-title{align-items:flex-start}.record-count{min-width:90px;padding:9px}.record-card-header{align-items:flex-start;padding:13px}.record-body{padding:13px}.vitals-grid{grid-template-columns:1fr}.prescriptions-list{grid-template-columns:1fr}}
-</style>
+
 </head>
 <body>
 <div class="page-container">
@@ -106,7 +70,44 @@ footer{padding:18px 0 4px;text-align:center;color:#8996aa;font-size:11px}
 <main class="main-content">
 <header class="top-header">
     <div><h1>Medical Records</h1><p>View medical records created by you</p></div>
-    <div class="doctor-info"><div class="doctor-avatar"><%=firstLetter%></div><div><strong><%=doctorName==null?"Doctor":doctorName%></strong><span><%=doctor.getSpecialization()==null?"":doctor.getSpecialization()%></span></div></div>
+   
+   <div class="doctor-account-menu">
+    <button type="button"
+            class="user-profile doctor-profile-trigger"
+            id="doctorProfileTrigger"
+            aria-expanded="false"
+            aria-controls="doctorProfileDropdown">
+
+        <div class="avatar"><%= firstLetter %></div>
+
+        <div class="user-info">
+            <strong><%= doctorName %></strong>
+            <span><%= doctor.getSpecialization() %></span>
+        </div>
+
+        <span class="doctor-chevron" aria-hidden="true">⌄</span>
+    </button>
+
+    <div class="doctor-dropdown" id="doctorProfileDropdown" hidden>
+        <a class="doctor-dropdown-item"
+           href="<%= request.getContextPath() %>/doctor/profile.jsp">
+            ✏️ <span>Update Details</span>
+        </a>
+
+        <a class="doctor-dropdown-item"
+           href="<%= request.getContextPath() %>/doctor/change-password.jsp">
+            🔒 <span>Change Password</span>
+        </a>
+
+        <div class="doctor-dropdown-divider"></div>
+
+        <a class="doctor-dropdown-item logout-item"
+           href="<%= request.getContextPath() %>/LogoutController">
+            🚪 <span>Logout</span>
+        </a>
+    </div>
+</div>
+
 </header>
 
 <section class="content-area">
@@ -203,5 +204,56 @@ footer{padding:18px 0 4px;text-align:center;color:#8996aa;font-size:11px}
 <footer>© 2026 CareWell Hospital. Professional care, better health.</footer>
 </main>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const profileButton = document.getElementById("doctorProfileTrigger");
+    const profileDropdown = document.getElementById("doctorProfileDropdown");
+
+    if (!profileButton || !profileDropdown) {
+        console.error("Doctor profile dropdown elements were not found.");
+        return;
+    }
+
+    function openDropdown() {
+        profileDropdown.hidden = false;
+        profileButton.setAttribute("aria-expanded", "true");
+    }
+
+    function closeDropdown() {
+        profileDropdown.hidden = true;
+        profileButton.setAttribute("aria-expanded", "false");
+    }
+
+    profileButton.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (profileDropdown.hidden) {
+            openDropdown();
+        } else {
+            closeDropdown();
+        }
+    });
+
+    profileDropdown.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    document.addEventListener("click", function (event) {
+        if (!profileButton.contains(event.target) &&
+            !profileDropdown.contains(event.target)) {
+            closeDropdown();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeDropdown();
+            profileButton.focus();
+        }
+    });
+});
+</script>
 </body>
 </html>

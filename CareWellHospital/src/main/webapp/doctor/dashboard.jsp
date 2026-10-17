@@ -37,7 +37,9 @@
     /*=====
 
        LOGIN CHECK
+
        ===================================================== */
+
     if (session.getAttribute("user") == null) {
 
         response.sendRedirect(
@@ -73,7 +75,9 @@
     /*=====
 
        LOGGED-IN USER
+
        ===================================================== */
+
     User loggedUser =
 
             (User) session.getAttribute("user");
@@ -103,7 +107,9 @@
     /*=====
 
        DAO OBJECTS
+
        ===================================================== */
+
     DoctorDAO doctorDAO =
 
             new DoctorDAOImpl();
@@ -119,7 +125,9 @@
     /*=====
 
        FIND LOGGED-IN DOCTOR
+
        ===================================================== */
+
     Doctor doctor = null;
 
     List<Doctor> allDoctors =
@@ -141,7 +149,9 @@
     /*=====
 
        DOCTOR NOT FOUND
+
        ===================================================== */
+
     if (doctor == null) {
 
         response.sendRedirect(
@@ -189,7 +199,9 @@
     /*=====
 
        LOAD DOCTOR DATA
+
        ===================================================== */
+
     List<AppointmentDetails> appointments =
 
             appointmentDetailsDAO
@@ -205,7 +217,9 @@
     /*=====
 
        CALCULATE APPOINTMENT STATISTICS
+
        ===================================================== */
+
     int totalAppointments =
 
             appointments.size();
@@ -249,7 +263,9 @@
     /*=====
 
        UNIQUE PATIENT COUNT
+
        ===================================================== */
+
     Set<Integer> uniquePatients =
 
             new HashSet<Integer>();
@@ -267,35 +283,52 @@
     }
 
     int totalPatients =
+
             uniquePatients.size();
 
-    /* =====================================================
-       TODAY'S UNIQUE PATIENT COUNT
-       ===================================================== */
+    /*=====
+
+    TODAY'S UNIQUE PATIENT COUNT
+
+    ===================================================== */
+    
     java.time.LocalDate today = java.time.LocalDate.now();
+
     Set<Integer> todayPatientIds = new HashSet<Integer>();
 
     for (AppointmentDetails appointment : appointments) {
+
         if (appointment.getAppointmentDate() == null) {
+
             continue;
+
         }
 
         String appointmentDate = appointment.getAppointmentDate().toString();
+
         String appointmentStatus = appointment.getStatus();
 
         if (appointmentDate.startsWith(today.toString())
+
                 && appointment.getPatientId() > 0
+
                 && !"CANCELLED".equalsIgnoreCase(appointmentStatus)) {
+
             todayPatientIds.add(appointment.getPatientId());
+
         }
+
     }
 
     int todayPatients = todayPatientIds.size();
+    
 
     /*=====
 
        DOCTOR DISPLAY INFORMATION
+
        ===================================================== */
+
     String doctorName =
 
             loggedUser.getFullName();
@@ -338,21 +371,15 @@
 
     </title>
 
-    <!-- Font Awesome -->
-
-    <link rel="stylesheet"
-
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <!-- CareWell CSS -->
-
-    <link rel="stylesheet"
-
-          href="${pageContext.request.contextPath}/css/style.css">
 
 <link rel="stylesheet"
+      href="${pageContext.request.contextPath}/css/style.css">
 
+<link rel="stylesheet"
       href="${pageContext.request.contextPath}/css/doctor-common.css">
+
+<link rel="stylesheet"
+      href="${pageContext.request.contextPath}/css/doctor-dashboard.css">
 
 </head>
 
@@ -384,15 +411,11 @@
 
             <p class="section-title">DOCTOR PORTAL</p>
 
-            <a class="sidebar-link active"
-
-               href="<%= request.getContextPath() %>/doctor/dashboard.jsp">
-
-                <span class="menu-icon">🏠</span>
-
-                Dashboard
-
-            </a>
+            <a href="${pageContext.request.contextPath}/doctor/dashboard.jsp"
+   class="sidebar-link active">
+    <span>🏠</span>
+    Dashboard
+</a>
 
             <a class="sidebar-link"
 
@@ -506,7 +529,7 @@
 
                 <button class="mobile-menu-btn">
 
-                    <i class="fa-solid fa-bars"></i>
+                    ☰
 
                 </button>
 
@@ -536,7 +559,7 @@
 
    class="notification">
 
-    <i class="fa-regular fa-bell"></i>
+    🔔
 
     <% if (unreadNotificationCount > 0) { %>
 
@@ -550,33 +573,42 @@
 
 </a>
 
-			<a href="<%= request.getContextPath() %>/doctor/profile.jsp"
+			<div class="doctor-account-menu" id="doctorAccountMenu">
 
-   class="user-profile">
+    <button type="button" class="user-profile doctor-profile-trigger"
 
-    <div class="avatar">
+            id="doctorProfileTrigger" aria-expanded="false"
 
-        <%= firstLetter %>
+            aria-controls="doctorProfileDropdown">
+
+        <div class="avatar"><%= firstLetter %></div>
+
+        <div class="user-info">
+
+            <strong><%= doctorName %></strong>
+
+            <span><%= doctor.getSpecialization() %></span>
+
+        </div>
+
+        <span class="doctor-chevron" aria-hidden="true">⌄</span>
+
+    </button>
+
+    <div class="doctor-dropdown" id="doctorProfileDropdown" hidden>
+
+
+        <a href="<%= request.getContextPath() %>/doctor/update-details.jsp" class="doctor-dropdown-item">✏️<span>Update Details</span></a>
+
+        <a href="<%= request.getContextPath() %>/doctor/change-password.jsp" class="doctor-dropdown-item">🔒<span>Change Password</span></a>
+
+        <div class="doctor-dropdown-divider"></div>
+
+        <a href="<%= request.getContextPath() %>/LogoutController" class="doctor-dropdown-item logout-item">🚪<span>Logout</span></a>
 
     </div>
 
-    <div class="user-info">
-
-        <strong>
-
-            <%= doctorName %>
-
-        </strong>
-
-        <span>
-
-            <%= doctor.getSpecialization() %>
-
-        </span>
-
-    </div>
-
-</a>
+</div>
 
         </div>
 
@@ -586,7 +618,7 @@
 
          PAGE CONTENT
 
-         ================================================= -->
+         \\================================================= -->
 
     <section class="page-content">
 
@@ -618,7 +650,7 @@
 
              DOCTOR PROFILE CARD
 
-             ================================================= -->
+             \\================================================= -->
 
         <div class="profile-header">
 
@@ -640,7 +672,7 @@
 
                     <%= doctor.getSpecialization() %>
 
-                    &nbsp; • &nbsp;
+                      •  
 
                     <%= doctor.getQualification() %>
 
@@ -686,34 +718,41 @@
 
 <div class="stats-grid">
 
-   
 <!-- OVERALL APPOINTMENTS -->
 
 <a href="<%= request.getContextPath() %>/appointments?action=doctor"
+
    class="stat-card"
+
    style="text-decoration:none; color:inherit; display:block;">
 
     <div class="stat-top">
+
         <div class="stat-label">Overall Appointments</div>
 
         <div class="stat-icon blue">
-            <i class="fa-solid fa-calendar-check"></i>
+
+            📅
+
         </div>
+
     </div>
 
     <div class="stat-number"><%= totalAppointments %></div>
 
     <div class="stat-change positive">
-        <i class="fa-solid fa-calendar"></i>
+
+        🗓️
+
         All appointments assigned to you
+
     </div>
 
 </a>
-   
 
 <!-- TODAY'S PATIENTS -->
 
-<a href="<%= request.getContextPath() %>/appointments?action=doctor&amp;filter=today"
+<a href="<%= request.getContextPath() %>/appointments?action=doctor&filter=today"
 
    class="stat-card"
 
@@ -725,7 +764,7 @@
 
         <div class="stat-icon teal">
 
-            <i class="fa-solid fa-hospital-user"></i>
+            🏥
 
         </div>
 
@@ -735,7 +774,7 @@
 
     <div class="stat-change positive">
 
-        <i class="fa-solid fa-calendar-day"></i>
+        📆
 
         Unique patients scheduled today
 
@@ -757,7 +796,7 @@
 
             <div class="stat-icon orange">
 
-                <i class="fa-solid fa-clock"></i>
+                ⏰
 
             </div>
 
@@ -787,7 +826,7 @@
 
             <div class="stat-icon green">
 
-                <i class="fa-solid fa-circle-check"></i>
+                ✅
 
             </div>
 
@@ -797,7 +836,7 @@
 
         <div class="stat-change positive">
 
-            <i class="fa-solid fa-check"></i>
+            ✔️
 
             Completed visits
 
@@ -811,7 +850,7 @@
 
              APPOINTMENT OVERVIEW
 
-             ================================================= -->
+             \\================================================= -->
 
         <div class="dashboard-grid">
 
@@ -837,11 +876,7 @@
 
                     </div>
 
-                    <i class="fa-solid fa-chart-column"
-
-                       style="color:#2563eb;">
-
-                    </i>
+                    📊
 
                 </div>
 
@@ -979,7 +1014,7 @@
 
              RECENT APPOINTMENTS
 
-             ================================================= -->
+             \\================================================= -->
 
         <div class="card">
 
@@ -1007,7 +1042,7 @@
 
                     View All
 
-                    <i class="fa-solid fa-arrow-right"></i>
+                    ➡️
 
                 </a>
 
@@ -1099,7 +1134,7 @@
 
                             <td>
 
-                                #<%= appointment.getAppointmentId() %>
+                                \#<%= appointment.getAppointmentId() %>
 
                             </td>
 
@@ -1165,7 +1200,7 @@
 
                                 <div class="empty-state">
 
-                                    <i class="fa-regular fa-calendar-xmark"></i>
+                                    📭
 
                                     <h3>
 
@@ -1203,7 +1238,7 @@
 
              MEDICAL RECORD SUMMARY
 
-             ================================================= -->
+             \\================================================= -->
 
         <div class="card"
 
@@ -1233,7 +1268,7 @@
 
                     View Records
 
-                    <i class="fa-solid fa-arrow-right"></i>
+                    ➡️
 
                 </a>
 
@@ -1281,7 +1316,7 @@
 
                             <td>
 
-                                #<%= record.getRecordId() %>
+                                \#<%= record.getRecordId() %>
 
                             </td>
 
@@ -1327,7 +1362,7 @@
 
                                 <div class="empty-state">
 
-                                    <i class="fa-solid fa-file-medical"></i>
+                                    🩺
 
                                     <h3>
 
@@ -1376,6 +1411,80 @@
     </section>
 
 </main>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const menu = document.getElementById("doctorAccountMenu");
+
+    const trigger = document.getElementById("doctorProfileTrigger");
+
+    const dropdown = document.getElementById("doctorProfileDropdown");
+
+    if (!menu || !trigger || !dropdown) return;
+
+    function closeMenu() {
+
+        menu.classList.remove("open");
+
+        dropdown.hidden = true;
+
+        trigger.setAttribute("aria-expanded", "false");
+
+    }
+
+    trigger.addEventListener("click", function (event) {
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+        const opening = dropdown.hidden;
+
+        dropdown.hidden = !opening;
+
+        menu.classList.toggle("open", opening);
+
+        trigger.setAttribute("aria-expanded", String(opening));
+
+    });
+
+    dropdown.addEventListener("click", function (event) {
+
+        event.stopPropagation();
+
+    });
+
+    document.addEventListener("click", function (event) {
+
+        if (!menu.contains(event.target)) closeMenu();
+
+    });
+
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key === "Escape") { closeMenu(); trigger.focus(); }
+
+    });
+
+    const mobileButton = document.querySelector(".mobile-menu-btn");
+
+    const sidebar = document.querySelector(".sidebar");
+
+    if (mobileButton && sidebar) {
+
+        mobileButton.addEventListener("click", function () {
+
+            sidebar.classList.toggle("open");
+
+        });
+
+    }
+
+});
+
+</script>
 
 </body>
 
