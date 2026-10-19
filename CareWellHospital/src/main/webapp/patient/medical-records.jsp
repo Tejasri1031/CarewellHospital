@@ -116,23 +116,14 @@
 
     <title>Medical Records - CareWell Hospital</title>
 
-	<link rel="stylesheet" href="<%= request.getContextPath() %>/css/patient-common.css?v=2">
+	
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/patient-common.css?v=3">
 
-<link rel="stylesheet" href="<%= request.getContextPath() %>/css/patient-medical-records.css?v=2">
-
-    <style>
-        .prescription-section { margin-top: 22px; }
-        .prescription-list { display: grid; grid-template-columns: 1fr; gap: 12px; }
-        .patient-prescription-card { padding: 14px; background: #f8fafc; border: 1px solid #e4eaf2; border-radius: 10px; min-width: 0; }
-        .patient-prescription-card h4 { margin: 0 0 7px; color: #176ce5; font-size: 14px; }
-        .prescription-date { margin: 0 0 10px; color: #7b89a1; font-size: 12px; }
-        .prescription-medicines { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
-        .patient-medicine { padding: 11px; background: #fff; border: 1px solid #e8edf4; border-radius: 8px; }
-        .patient-medicine strong { display: block; margin-bottom: 6px; color: #182238; }
-        .patient-medicine p, .prescription-general { margin: 4px 0; color: #40516d; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
-        .prescription-general { margin-top: 12px; padding-top: 10px; border-top: 1px solid #e8edf4; }
-        .no-prescription { margin: 0; color: #8996aa; font-size: 13px; }
-    </style>
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/patient-medical-records.css?v=3">
+	
+   
 </head>
 
 <body>

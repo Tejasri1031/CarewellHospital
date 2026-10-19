@@ -81,8 +81,12 @@
 
     <title>Prescriptions | CareWell Hospital</title>
 
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/patient-common.css?v=2">
-<link rel="stylesheet" href="<%= request.getContextPath() %>/css/patient-prescriptions.css?v=2">
+    <link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/patient-common.css?v=3">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/patient-prescriptions.css?v=3">
+    
 </head>
 
 <body>

@@ -509,3 +509,70 @@
 
 
 .update-message.password-success { color: #167744; background: #edfff5; border: 1px solid #bdebd1; }
+
+
+/* Consistent typography across the patient profile page */
+
+.profile-heading h2 {
+    font-size: 23px;
+    line-height: 1.3;
+}
+
+.profile-heading p {
+    font-size: 12px;
+}
+
+.section-header h2 {
+    font-size: 20px;
+    line-height: 1.35;
+}
+
+.section-header p {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.detail-item > span,
+.emergency-details > div > span,
+.account-item > span {
+    font-size: 10px;
+    letter-spacing: 0.8px;
+}
+
+.detail-item > strong,
+.emergency-details strong,
+.account-item strong {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.information-card h3 {
+    font-size: 14px;
+}
+
+.information-card p {
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* Keep navigation text consistent */
+.nav-item,
+.sidebar-link {
+    font-size: 14px;
+}
+
+.nav-item.active,
+.sidebar-link.active,
+.nav-item.active:hover,
+.sidebar-link.active:hover {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .detail-item > strong,
+    .emergency-details strong,
+    .account-item strong {
+        font-size: 13px;
+    }
+}

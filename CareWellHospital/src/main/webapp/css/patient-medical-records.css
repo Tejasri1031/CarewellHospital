@@ -1,33 +1,291 @@
 @charset "UTF-8";
 
-/* =========================
-   SUMMARY
-   ========================= */
+/* =========================================================
+   CAREWELL HOSPITAL — MEDICAL RECORDS
+   Clean, spacious, responsive external stylesheet
+   ========================================================= */
 
+:root {
+    --cw-blue: #2878ed;
+    --cw-blue-dark: #175bc5;
+    --cw-navy: #112b49;
+    --cw-text: #193653;
+    --cw-muted: #7b8da5;
+    --cw-border: #e3eaf3;
+    --cw-page: #f4f7fb;
+    --cw-white: #ffffff;
+    --cw-green: #159b68;
+    --cw-shadow: 0 5px 18px rgba(25, 54, 83, 0.045);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--cw-page);
+    color: var(--cw-text);
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    min-width: 260px;
+    background: var(--cw-navy);
+    color: #fff;
+}
+
+.brand {
+    display: flex;
+    flex: 0 0 106px;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 22px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand-icon {
+    display: flex;
+    flex: 0 0 46px;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: #eef5ff;
+    color: var(--cw-blue);
+    font-size: 22px;
+    line-height: 1;
+}
+
+.brand h2 {
+    margin: 0 0 3px;
+    color: #fff;
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+
+.brand span {
+    display: block;
+    color: #91a7c5;
+    font-size: 9px;
+    letter-spacing: 3px;
+    line-height: 1.2;
+}
+
+.navigation {
+    flex: 1;
+    width: 100%;
+    padding: 22px 14px;
+    overflow-y: auto;
+}
+
+.nav-section-title {
+    margin: 18px 0 8px;
+    padding: 0 12px;
+    color: #88a4c7;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.15px;
+    text-transform: uppercase;
+}
+
+.nav-section-title:first-child {
+    margin-top: 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 44px;
+    margin: 3px 0;
+    padding: 0 13px;
+    border-radius: 9px;
+    color: #d4e0ef;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: #fff;
+}
+
+.nav-item.active,
+.nav-item.active:hover {
+    background: var(--cw-blue);
+    color: #fff;
+}
+
+.nav-icon {
+    display: inline-flex;
+    flex: 0 0 20px;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    font-size: 14px;
+}
+
+.sidebar-bottom {
+    flex-shrink: 0;
+    width: 100%;
+    margin-top: auto;
+    padding: 12px 14px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-bottom .nav-item {
+    color: #b8c8dc;
+}
+
+/* Main layout */
+.main-content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    width: calc(100% - 260px);
+    min-width: 0;
+    min-height: 100vh;
+    margin-left: 260px;
+    background: var(--cw-page);
+}
+
+/* Header */
+.top-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    min-height: 88px;
+    padding: 18px 32px;
+    background: #fff;
+    border-bottom: 1px solid var(--cw-border);
+}
+
+.top-header h1 {
+    margin: 0 0 4px;
+    color: #142f4c;
+    font-size: 23px;
+    font-weight: 750;
+    line-height: 1.25;
+    letter-spacing: -0.45px;
+}
+
+.top-header p {
+    margin: 0;
+    color: var(--cw-muted);
+    font-size: 12px;
+}
+
+.patient-info {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.patient-avatar {
+    display: flex;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #e9f2ff;
+    color: var(--cw-blue);
+    font-size: 16px;
+    font-weight: 750;
+}
+
+.patient-info strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--cw-text);
+    font-size: 13px;
+}
+
+.patient-info span {
+    display: block;
+    color: var(--cw-muted);
+    font-size: 11px;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    padding: 26px 32px 30px;
+}
+
+/* Summary cards */
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-    margin-bottom: 34px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0 0 30px;
 }
 
 .summary-card {
-    background: #ffffff;
-    border: 1px solid #e1e8f1;
-    border-radius: 13px;
-    padding: 20px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 14px;
+    min-width: 0;
+    min-height: 96px;
+    padding: 18px;
+    background: var(--cw-white);
+    border: 1px solid var(--cw-border);
+    border-radius: 13px;
+    box-shadow: var(--cw-shadow);
 }
 
 .summary-icon {
-    width: 47px;
-    height: 47px;
-    border-radius: 11px;
     display: flex;
+    flex: 0 0 46px;
     align-items: center;
     justify-content: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
     font-size: 20px;
     font-weight: 700;
 }
@@ -39,12 +297,12 @@
 
 .summary-icon.green {
     background: #e8f8f0;
-    color: #20a66b;
+    color: #159b68;
 }
 
 .summary-icon.red {
     background: #fff0f2;
-    color: #e25368;
+    color: #df5268;
 }
 
 .summary-icon.purple {
@@ -52,177 +310,187 @@
     color: #7c4dcc;
 }
 
+.summary-card > div:last-child {
+    min-width: 0;
+}
+
 .summary-card span {
     display: block;
-    color: #7d91aa;
+    margin-bottom: 4px;
+    color: var(--cw-muted);
     font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.65px;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 6px;
 }
 
 .summary-card strong {
     display: block;
-    color: #193653;
+    color: var(--cw-text);
     font-size: 22px;
+    font-weight: 750;
+    line-height: 1.2;
 }
 
-
-/* =========================
-   SECTION HEADER
-   ========================= */
-
+/* Section title */
 .section-header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 15px;
+    gap: 16px;
+    margin: 0 0 15px;
 }
 
 .section-header h2 {
+    margin: 0 0 4px;
+    color: var(--cw-text);
     font-size: 20px;
-    color: #193653;
-    margin-bottom: 5px;
+    font-weight: 750;
+    line-height: 1.3;
+    letter-spacing: -0.25px;
 }
 
 .section-header p {
-    color: #8295ad;
+    margin: 0;
+    color: var(--cw-muted);
     font-size: 12px;
 }
 
 .total-badge {
-    padding: 9px 14px;
+    flex: 0 0 auto;
+    padding: 8px 13px;
+    border-radius: 9px;
     background: #edf5ff;
-    color: #2873d9;
-    border-radius: 8px;
-    font-size: 12px;
+    color: var(--cw-blue-dark);
+    font-size: 11px;
+    font-weight: 600;
 }
 
-
-/* =========================
-   RECORD CARD
-   ========================= */
-
+/* Medical record card */
 .record-card {
-    background: #ffffff;
-    border: 1px solid #dfe7f0;
-    border-radius: 13px;
-    margin-bottom: 20px;
+    margin: 0 0 20px;
     overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--cw-border);
+    border-radius: 14px;
+    box-shadow: var(--cw-shadow);
 }
 
 .record-header {
-    padding: 20px 22px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background: #fbfdff;
-    border-bottom: 1px solid #e5ebf2;
+    justify-content: space-between;
+    gap: 22px;
+    padding: 19px 22px;
+    background: #fff;
+    border-bottom: 1px solid var(--cw-border);
 }
 
 .record-title {
     display: flex;
     align-items: center;
     gap: 13px;
+    min-width: 0;
 }
 
 .record-icon {
+    display: flex;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
     width: 44px;
     height: 44px;
-    border-radius: 10px;
+    border-radius: 11px;
     background: #eaf3ff;
-    color: #2675ed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: var(--cw-blue);
     font-size: 20px;
     font-weight: 700;
 }
 
 .record-title h3 {
-    color: #193653;
+    margin: 0 0 4px;
+    color: var(--cw-text);
     font-size: 15px;
-    margin-bottom: 5px;
+    font-weight: 750;
 }
 
 .record-title p {
-    color: #8295ad;
+    margin: 0;
+    color: var(--cw-muted);
     font-size: 11px;
 }
 
 .doctor-info {
+    flex: 0 0 auto;
     text-align: right;
 }
 
 .doctor-info span {
     display: block;
-    color: #8497ae;
+    margin-bottom: 4px;
+    color: var(--cw-muted);
     font-size: 9px;
-    letter-spacing: 0.8px;
-    margin-bottom: 5px;
+    font-weight: 650;
+    letter-spacing: 0.85px;
 }
 
 .doctor-info strong {
-    color: #2873d9;
-    font-size: 13px;
+    color: var(--cw-blue-dark);
+    font-size: 12px;
+    font-weight: 700;
 }
-
-
-/* =========================
-   RECORD BODY
-   ========================= */
 
 .record-body {
     padding: 22px;
 }
 
 .medical-section {
-    margin-bottom: 20px;
+    margin: 0 0 19px;
 }
 
 .section-label {
+    margin: 0 0 8px;
     color: #7186a0;
     font-size: 9px;
-    font-weight: 700;
+    font-weight: 750;
     letter-spacing: 1px;
-    margin-bottom: 8px;
 }
 
 .section-value {
     padding: 12px 14px;
     background: #f8fafd;
     border: 1px solid #e6ecf3;
-    border-radius: 8px;
+    border-radius: 9px;
     color: #4f6682;
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 12px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
 }
 
 .diagnosis-value {
     padding: 12px 14px;
-    background: #eef7f2;
-    border: 1px solid #d9eee3;
-    border-left: 4px solid #20a66b;
-    border-radius: 8px;
+    background: #eef8f3;
+    border: 1px solid #d9eee4;
+    border-left: 4px solid var(--cw-green);
+    border-radius: 9px;
     color: #277653;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
-
-/* =========================
-   VITALS
-   ========================= */
-
+/* Vitals */
 .vitals-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
-    margin-bottom: 20px;
+    margin: 0 0 20px;
 }
 
 .vital-card {
-    padding: 14px;
+    min-width: 0;
+    padding: 13px 14px;
     background: #f8fafd;
     border: 1px solid #e5ebf2;
     border-radius: 9px;
@@ -230,144 +498,464 @@
 
 .vital-card span {
     display: block;
-    color: #8093aa;
+    margin-bottom: 5px;
+    color: var(--cw-muted);
     font-size: 10px;
-    margin-bottom: 7px;
 }
 
 .vital-card strong {
+    display: block;
     color: #24415f;
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
 }
 
+/* Prescriptions */
+.prescription-section {
+    margin-top: 2px;
+}
 
-/* =========================
-   DOCTOR NOTES
-   ========================= */
+.prescription-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+}
 
+.patient-prescription-card {
+    min-width: 0;
+    padding: 15px;
+    background: #f8fafd;
+    border: 1px solid #e4eaf2;
+    border-radius: 11px;
+}
+
+.patient-prescription-card h4 {
+    margin: 0 0 5px;
+    color: var(--cw-blue-dark);
+    font-size: 14px;
+    font-weight: 750;
+}
+
+.prescription-date {
+    margin: 0 0 11px;
+    color: var(--cw-muted);
+    font-size: 11px;
+}
+
+.prescription-medicines {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 11px;
+}
+
+.patient-medicine {
+    min-width: 0;
+    padding: 13px;
+    background: #fff;
+    border: 1px solid #e6edf5;
+    border-radius: 9px;
+}
+
+.patient-medicine strong {
+    display: block;
+    margin: 0 0 7px;
+    color: #172d46;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.patient-medicine p,
+.prescription-general {
+    margin: 5px 0 0;
+    color: #526780;
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.patient-medicine p b,
+.prescription-general b {
+    color: #29445f;
+    font-weight: 700;
+}
+
+.prescription-general {
+    margin-top: 13px;
+    padding-top: 11px;
+    border-top: 1px solid #e6edf5;
+}
+
+.no-prescription {
+    margin: 0;
+    padding: 12px 13px;
+    border: 1px dashed #d7e1ed;
+    border-radius: 9px;
+    color: var(--cw-muted);
+    font-size: 12px;
+}
+
+/* Doctor notes */
 .doctor-notes {
     display: flex;
+    align-items: flex-start;
     gap: 12px;
     padding: 15px 16px;
     background: #f1f7ff;
     border: 1px solid #dceaff;
-    border-radius: 9px;
+    border-radius: 10px;
 }
 
 .notes-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: #dcecff;
-    color: #2875df;
     display: flex;
+    flex: 0 0 32px;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: #dcecff;
+    color: var(--cw-blue);
+    font-size: 15px;
 }
 
 .doctor-notes span {
     display: block;
+    margin-bottom: 4px;
     color: #66809c;
     font-size: 9px;
-    font-weight: 700;
+    font-weight: 750;
     letter-spacing: 0.8px;
-    margin-bottom: 5px;
 }
 
 .doctor-notes p {
+    margin: 0;
     color: #526b87;
     font-size: 12px;
-    line-height: 1.5;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
 }
 
-
-/* =========================
-   EMPTY STATE
-   ========================= */
-
+/* Empty state */
 .empty-state {
-    background: #ffffff;
-    border: 1px solid #dfe7f0;
-    border-radius: 13px;
+    padding: 54px 20px;
+    background: #fff;
+    border: 1px solid var(--cw-border);
+    border-radius: 14px;
     text-align: center;
-    padding: 60px 20px;
+    box-shadow: var(--cw-shadow);
 }
 
 .empty-icon {
-    width: 55px;
-    height: 55px;
-    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin: 0 auto 14px;
     border-radius: 50%;
     background: #edf4ff;
-    color: #2875df;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
+    color: var(--cw-blue);
+    font-size: 23px;
     font-weight: 700;
 }
 
 .empty-state h3 {
+    margin: 0 0 6px;
     color: #29435f;
     font-size: 16px;
-    margin-bottom: 7px;
 }
 
 .empty-state p {
+    margin: 0;
     color: #899aaf;
     font-size: 12px;
 }
 
-
-/* =========================
-   FOOTER
-   ========================= */
-
+/* Footer */
 .footer {
-    padding: 18px 36px 25px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    color: #8a9bb0;
-    font-size: 10px;
+    gap: 12px;
+    width: 100%;
+    min-height: 58px;
+    padding: 17px 32px;
+    background: #fff;
+    border-top: 1px solid var(--cw-border);
+    color: var(--cw-muted);
+    font-size: 11px;
 }
 
+/* Scrollbar */
+.navigation::-webkit-scrollbar {
+    width: 5px;
+}
 
+.navigation::-webkit-scrollbar-track {
+    background: transparent;
+}
 
-/* =========================
-   RESPONSIVE
-   ========================= */
+.navigation::-webkit-scrollbar-thumb {
+    background: #345372;
+    border-radius: 10px;
+}
 
-@media (max-width: 1100px) {
+/* Responsive layouts */
+@media (max-width: 1200px) {
+    .content {
+        padding: 24px;
+    }
+
     .summary-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .vitals-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .prescription-medicines {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 900px) {
+    .sidebar {
+        width: 230px;
+        min-width: 230px;
+    }
+
+    .main-content {
+        width: calc(100% - 230px);
+        margin-left: 230px;
+    }
+
+    .top-header {
+        padding-right: 22px;
+        padding-left: 22px;
+    }
+
+    .content {
+        padding: 22px;
+    }
+
+    .footer {
+        padding-right: 22px;
+        padding-left: 22px;
+    }
+}
+
+@media (max-width: 680px) {
+    .sidebar {
+        width: 205px;
+        min-width: 205px;
+    }
+
+    .brand {
+        padding-right: 15px;
+        padding-left: 15px;
+    }
+
+    .main-content {
+        width: calc(100% - 205px);
+        margin-left: 205px;
+    }
+
+    .top-header {
+        align-items: flex-start;
+        min-height: 78px;
+        padding: 17px 15px;
+    }
+
+    .top-header h1 {
+        font-size: 19px;
+    }
+
+    .top-header p {
+        max-width: 250px;
+        font-size: 11px;
+    }
+
+    .patient-info {
+        gap: 7px;
+    }
+
+    .patient-avatar {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        flex-basis: 36px;
+    }
+
+    .patient-info > div:last-child {
+        display: none;
+    }
+
+    .content {
+        padding: 17px 14px 22px;
+    }
+
     .record-header {
         align-items: flex-start;
-        gap: 20px;
+        gap: 13px;
+        padding: 16px;
+    }
+
+    .record-body {
+        padding: 16px;
+    }
+
+    .doctor-info {
+        max-width: 42%;
+    }
+
+    .doctor-info strong {
+        overflow-wrap: anywhere;
+    }
+
+    .prescription-medicines {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .footer {
+        padding: 15px 14px;
     }
 }
 
-@media (max-width: 600px) {
-    .summary-grid,
-    .vitals-grid {
-        grid-template-columns: 1fr;
+@media (max-width: 480px) {
+    .sidebar {
+        width: 76px;
+        min-width: 76px;
+    }
+
+    .brand {
+        justify-content: center;
+        padding: 15px 8px;
+    }
+
+    .brand > div:last-child,
+    .nav-section-title,
+    .nav-item > span:last-child {
+        display: none;
+    }
+
+    .navigation {
+        padding: 15px 9px;
+    }
+
+    .nav-item {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .nav-icon {
+        flex-basis: auto;
+        font-size: 17px;
+    }
+
+    .sidebar-bottom {
+        padding: 10px 9px 14px;
+    }
+
+    .main-content {
+        width: calc(100% - 76px);
+        margin-left: 76px;
+    }
+
+    .top-header {
+        gap: 8px;
+        padding: 14px 12px;
+    }
+
+    .top-header h1 {
+        font-size: 17px;
+    }
+
+    .top-header p {
+        font-size: 10px;
+    }
+
+    .patient-avatar {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        flex-basis: 32px;
+        font-size: 13px;
+    }
+
+    .content {
+        padding: 14px 10px 18px;
+    }
+
+    .summary-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .summary-card {
+        min-height: 76px;
+        padding: 13px;
+    }
+
+    .summary-icon {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+    }
+
+    .section-header {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .section-header h2 {
+        font-size: 18px;
+    }
+
+    .total-badge {
+        padding: 7px 9px;
+        font-size: 10px;
     }
 
     .record-header {
         flex-direction: column;
-        align-items: flex-start;
+        gap: 12px;
     }
 
     .doctor-info {
+        max-width: none;
+        padding-left: 57px;
         text-align: left;
+    }
+
+    .record-body {
+        padding: 13px;
+    }
+
+    .vitals-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .vital-card {
+        padding: 11px;
+    }
+
+    .footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}

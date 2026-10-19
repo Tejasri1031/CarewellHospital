@@ -76,8 +76,11 @@
 
     <title>Bills & Payments | CareWell Hospital</title>
 
-   <link rel="stylesheet" href="<%= request.getContextPath() %>/css/patient-common.css?v=2">
-<link rel="stylesheet" href="<%= request.getContextPath() %>/css/patient-bills.css?v=2">
+	<link rel="stylesheet"
+      href="${pageContext.request.contextPath}/css/patient-common.css?v=5">
+
+<link rel="stylesheet"
+      href="${pageContext.request.contextPath}/css/patient-bills.css?v=5">
    
 </head>
 

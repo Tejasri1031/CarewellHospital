@@ -215,13 +215,16 @@
 
     <title>Patient Dashboard | CareWell Hospital</title>
 
-<link rel="stylesheet" href="<%= request.getContextPath() %>/css/patient-common.css?v=2">
-<link rel="stylesheet" href="<%= request.getContextPath() %>/css/patient-dashboard.css?v=2">
+
 <link rel="stylesheet"
-      href="<%= request.getContextPath() %>/css/patient-notifications.css?v=12">
-  
-  
-</head>
+      href="<%= request.getContextPath() %>/css/patient-common.css?v=4">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/patient-notifications.css?v=13">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/patient-dashboard.css?v=4">
+
 
 
 <body>

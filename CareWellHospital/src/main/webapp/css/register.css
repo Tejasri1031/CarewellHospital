@@ -1,0 +1,508 @@
+
+@charset "UTF-8";
+
+/* =========================================
+   CAREWELL HOSPITAL - REGISTER PAGE
+   ========================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #172b4d;
+    background:
+        radial-gradient(circle at 8% 12%, rgba(39, 120, 238, 0.10), transparent 30%),
+        radial-gradient(circle at 92% 85%, rgba(18, 174, 160, 0.10), transparent 32%),
+        #f3f7fc;
+}
+
+.register-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+}
+
+/* Main registration card */
+
+.register-card {
+    width: 100%;
+    max-width: 820px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e2eaf4;
+    border-radius: 20px;
+    box-shadow: 0 18px 55px rgba(28, 53, 87, 0.10);
+    animation: registerEnter 0.35s ease-out;
+}
+
+@keyframes registerEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Header */
+
+.register-header {
+    padding: 30px 38px 26px;
+    background: linear-gradient(135deg, #ffffff, #f5f9ff);
+    border-bottom: 1px solid #e8eef6;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 26px;
+}
+
+.brand-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #18c4c8, #079bb9);
+    color: #ffffff;
+    font-size: 26px;
+    box-shadow: 0 5px 14px rgba(9, 165, 187, 0.20);
+}
+
+.brand-name {
+    color: #172b4d;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+    line-height: 1.2;
+}
+
+.brand-caption {
+    margin-top: 4px;
+    color: #71839c;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.secure-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 11px;
+    border: 1px solid #c9f0dc;
+    border-radius: 20px;
+    background: #effbf5;
+    color: #17834f;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.register-header h1 {
+    margin: 17px 0 8px;
+    color: #172b4d;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    line-height: 1.25;
+}
+
+.subtitle {
+    max-width: 580px;
+    margin: 0;
+    color: #718198;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* Patient account information */
+
+.account-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
+    padding: 14px 16px;
+    border: 1px solid #dce9fb;
+    border-radius: 12px;
+    background: #edf5ff;
+}
+
+.badge-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #d9eaff;
+    color: #1765d1;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.account-badge strong,
+.account-badge small {
+    display: block;
+}
+
+.account-badge strong {
+    color: #23436e;
+    font-size: 13px;
+}
+
+.account-badge small {
+    margin-top: 4px;
+    color: #6b7e99;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Form body */
+
+.form-content {
+    padding: 30px 38px 32px;
+}
+
+.section-heading {
+    margin: 0 0 20px;
+}
+
+.section-heading h2 {
+    margin: 0 0 5px;
+    color: #203858;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+.section-heading p {
+    margin: 0;
+    color: #8492a7;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 19px 22px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.form-field.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-field label {
+    margin: 0 0 8px;
+    color: #344563;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.form-field label span {
+    color: #e05252;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid #d8e2ef;
+    border-radius: 9px;
+    outline: none;
+    background: #ffffff;
+    color: #263852;
+    font-family: inherit;
+    font-size: 13px;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background-color 0.2s ease;
+}
+
+.form-field input,
+.form-field select {
+    height: 46px;
+    padding: 0 13px;
+}
+
+.form-field textarea {
+    min-height: 95px;
+    padding: 12px 13px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+    color: #9aa9bc;
+}
+
+.form-field input:hover,
+.form-field select:hover,
+.form-field textarea:hover {
+    border-color: #afc5e1;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+    border-color: #2878ee;
+    box-shadow: 0 0 0 3px rgba(40, 120, 238, 0.12);
+}
+
+.form-field select,
+.form-field input[type="date"] {
+    cursor: pointer;
+}
+
+.field-hint {
+    margin-top: 6px;
+    color: #8997aa;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* Emergency contact */
+
+.emergency-heading {
+    margin-top: 32px;
+    padding-top: 25px;
+    border-top: 1px solid #edf1f6;
+}
+
+/* Alerts */
+
+.form-alert {
+    margin-bottom: 22px;
+    padding: 13px 15px;
+    border: 1px solid;
+    border-radius: 9px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.error-message {
+    border-color: #fecaca;
+    background: #fff1f2;
+    color: #b42332;
+}
+
+/* Privacy note */
+
+.privacy-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    margin-top: 26px;
+    padding: 14px;
+    border: 1px solid #e0eaf6;
+    border-radius: 10px;
+    background: #f7faff;
+}
+
+.privacy-icon {
+    width: 23px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #dff7eb;
+    color: #13834d;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.privacy-note p {
+    margin: 1px 0 0;
+    color: #718198;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Submit button */
+
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 50px;
+    margin-top: 23px;
+    padding: 0 18px;
+    border: 1px solid #1765d1;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2878ee, #1765d1);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 750;
+    cursor: pointer;
+    box-shadow: 0 5px 13px rgba(40, 120, 238, 0.17);
+    transition: background 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+}
+
+.submit-btn span {
+    font-size: 20px;
+    transition: transform 0.2s ease;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(135deg, #1765d1, #1254b4);
+    box-shadow: 0 8px 18px rgba(40, 120, 238, 0.24);
+    transform: translateY(-1px);
+}
+
+.submit-btn:hover span {
+    transform: translateX(3px);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn:focus-visible {
+    outline: 3px solid rgba(40, 120, 238, 0.25);
+    outline-offset: 3px;
+}
+
+/* Sign in link */
+
+.login-link {
+    margin: 24px 0 0;
+    color: #7b899d;
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: center;
+}
+
+.login-link a {
+    margin-left: 4px;
+    color: #216ce0;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    color: #124fae;
+    text-decoration: underline;
+}
+
+/* Footer */
+
+.register-footer {
+    padding: 17px 24px;
+    border-top: 1px solid #edf1f6;
+    background: #fbfcfe;
+    color: #8b98aa;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* Tablet */
+
+@media (max-width: 650px) {
+    .register-page {
+        padding: 20px 13px;
+    }
+
+    .register-card {
+        border-radius: 15px;
+    }
+
+    .register-header {
+        padding: 25px 23px 22px;
+    }
+
+    .form-content {
+        padding: 25px 23px 27px;
+    }
+
+    .register-header h1 {
+        font-size: 26px;
+    }
+
+    .form-grid {
+        gap: 17px;
+    }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+    .register-page {
+        padding: 12px 9px;
+    }
+
+    .register-header {
+        padding: 22px 18px;
+    }
+
+    .form-content {
+        padding: 23px 18px;
+    }
+
+    .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 17px;
+    }
+
+    .form-field.full-width {
+        grid-column: auto;
+    }
+
+    .register-header h1 {
+        font-size: 24px;
+    }
+
+    .brand {
+        margin-bottom: 22px;
+    }
+
+    .emergency-heading {
+        margin-top: 26px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

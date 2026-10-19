@@ -81,7 +81,7 @@
 
         <div class="sidebar-bottom">
             <a href="<%= context %>/LogoutController" class="nav-item logout">
-                <span class="nav-icon">↪</span><span>Logout</span>
+                <span class="nav-icon">🏃🚪</span><span>Logout</span>
             </a>
         </div>
     </aside>
