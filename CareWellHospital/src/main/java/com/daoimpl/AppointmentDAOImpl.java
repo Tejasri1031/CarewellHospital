@@ -17,11 +17,14 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     @Override
     public boolean addAppointment(Appointment appointment) {
 
-        String sql = "INSERT INTO appointments "
-                + "(patient_id, doctor_id, department_id, appointment_date, "
-                + "appointment_time, reason, status, notes) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+String sql = "INSERT INTO appointments "
+        + "(patient_id, doctor_id, department_id, appointment_date, "
+        + "appointment_time, reason, status, notes, response_due_at) "
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
+        + "DATE_SUB(TIMESTAMP(?, ?), INTERVAL 1 DAY))";
+
+    	
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
@@ -34,6 +37,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
             statement.setString(6, appointment.getReason());
             statement.setString(7, appointment.getStatus());
             statement.setString(8, appointment.getNotes());
+            statement.setDate(9, appointment.getAppointmentDate());
+            statement.setTime(10, appointment.getAppointmentTime());
 
             return statement.executeUpdate() > 0;
 
@@ -46,12 +51,16 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     
     @Override
     public int addAppointmentAndGetId(Appointment appointment) {
+    	
 
-        String sql = "INSERT INTO appointments "
-                + "(patient_id, doctor_id, department_id, appointment_date, "
-                + "appointment_time, reason, status, notes) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+String sql = "INSERT INTO appointments "
+        + "(patient_id, doctor_id, department_id, appointment_date, "
+        + "appointment_time, reason, status, notes, response_due_at) "
+        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
+        + "DATE_SUB(TIMESTAMP(?, ?), INTERVAL 1 DAY))";
+
+    	
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(
@@ -97,6 +106,8 @@ public class AppointmentDAOImpl implements AppointmentDAO {
                     8,
                     appointment.getNotes()
             );
+            statement.setDate(9, appointment.getAppointmentDate());
+            statement.setTime(10, appointment.getAppointmentTime());
 
             int rowsInserted =
                     statement.executeUpdate();
