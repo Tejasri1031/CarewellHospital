@@ -31,9 +31,7 @@ public class DailyAppointmentReminderService {
 
     private final DailyAppointmentReminderDAOImpl reminderDAO =
             new DailyAppointmentReminderDAOImpl();
-    private static final String TEST_RECIPIENT_EMAIL =
-            "reethuroyal67@gmail.com";
-
+    
     public void sendDailyAppointmentReminders() {
 
         Date today = Date.valueOf(LocalDate.now());
@@ -137,7 +135,7 @@ public class DailyAppointmentReminderService {
                         + "Regards,\nCareWell Hospital";
 
                 boolean emailSent = EmailService.sendEmail(
-                		TEST_RECIPIENT_EMAIL,
+                        doctorUser.getEmail().trim(),
                         subject,
                         body);
 

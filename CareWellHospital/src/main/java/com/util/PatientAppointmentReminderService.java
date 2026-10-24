@@ -27,12 +27,9 @@ import com.model.User;
 
 public class PatientAppointmentReminderService {
 
-    private static final String TEST_RECIPIENT_EMAIL =
-            "reethuroyal67@gmail.com";
-
-    private static final String BASE_URL =
-            "https://your-actual-render-domain.onrender.com";
-    
+	private static final String BASE_URL =
+	        "https://carewellhospital.onrender.com"; 
+   
     private static final ZoneId ZONE =
             ZoneId.of("Asia/Kolkata");
 
@@ -199,11 +196,20 @@ if (!saved) {
                         + "A cancellation request may require hospital review.\n\n"
                         + "Regards,\nCareWell Hospital";
 
+                String patientEmail = patientUser.getEmail();
+
+                if (patientEmail == null || patientEmail.trim().isEmpty()) {
+                    System.err.println(
+                            "Patient email is missing for appointment "
+                            + appointmentId);
+                    continue;
+                }
+
                 boolean emailSent = EmailService.sendEmail(
-                        TEST_RECIPIENT_EMAIL,
+                        patientEmail.trim(),
                         subject,
                         body);
-
+                
                 if (emailSent) {
 
                     reminderDAO.recordEmailSent(

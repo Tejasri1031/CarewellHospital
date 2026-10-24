@@ -14,17 +14,18 @@ public class AppointmentEscalationService {
 
     public void processOverdueAppointments() {
 
-        String sql =
-                "SELECT a.appointment_id, a.patient_id, a.doctor_id, "
-              + "a.appointment_date, a.appointment_time, "
-              + "a.status, u.full_name, u.role "
-              + "FROM appointments a "
-              + "JOIN patients p ON a.patient_id = p.patient_id "
-              + "JOIN users u ON p.user_id = u.user_id "
-              + "WHERE a.response_due_at <= NOW() "
-              + "AND (a.status = 'PENDING' "
-              + "OR (a.status = 'CANCELLED' "
-              + "AND a.patient_notified_at IS NULL))";
+    	String sql =
+    	        "SELECT a.appointment_id, a.patient_id, a.doctor_id, "
+    	      + "a.appointment_date, a.appointment_time, "
+    	      + "a.status, u.full_name, u.role, u.email "
+    	      + "FROM appointments a "
+    	      + "JOIN patients p ON a.patient_id = p.patient_id "
+    	      + "JOIN users u ON p.user_id = u.user_id "
+    	      + "WHERE a.response_due_at <= NOW() "
+    	      + "AND (a.status = 'PENDING' "
+    	      + "OR (a.status = 'CANCELLED' "
+    	      + "AND a.patient_notified_at IS NULL))";
+              
 
         System.out.println(
                 "Appointment escalation service running at: "
@@ -69,7 +70,9 @@ public class AppointmentEscalationService {
                         "DEBUG: Query executed. Checking results.");
 
                 while (rs.next()) {
-
+                		
+                	String patientEmail = rs.getString("email");
+                	
                     foundCount++;
 
                     int appointmentId =

@@ -186,6 +186,16 @@
                 }
             %>
 
+			
+			<%
+    if ("success".equals(request.getParameter("reset"))) {
+%>
+    <div class="alert alert-success">
+        Your password has been reset successfully. Please log in.
+    </div>
+<%
+    }
+%>
 
             <!-- Login Form -->
 
@@ -215,22 +225,33 @@
 
                 <!-- Password -->
 
-                <div class="form-group">
+                
+<div class="form-group">
+    <label for="password">
+        <i class="fa-solid fa-lock"></i>
+        Password
+    </label>
 
-                    <label for="password">
-                        <i class="fa-solid fa-lock"></i>
-                        Password
-                    </label>
+    <div class="password-input-wrapper">
+        <input
+            type="password"
+            id="password"
+            name="password"
+            class="form-control"
+            placeholder="Enter your password"
+            required>
 
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        class="form-control"
-                        placeholder="Enter your password"
-                        required>
-
-                </div>
+        <button
+            type="button"
+            id="togglePassword"
+            class="password-toggle"
+            aria-label="Show password"
+            aria-pressed="false">
+            <i class="fa-regular fa-eye" aria-hidden="true"></i>
+        </button>
+    </div>
+</div>
+                
 
 
                 <!-- Remember / Forgot -->
@@ -257,15 +278,10 @@
                     </label>
 
 
-                    <a href="#"
-                       style="
-                       color:#2563eb;
-                       font-weight:600;
-                       ">
-
-                        Forgot Password?
-
-                    </a>
+                   <a href="${pageContext.request.contextPath}/forgot-password"
+   style="color: #2563eb; font-weight: 600;">
+    Forgot Password?
+</a>
 
                 </div>
 
@@ -301,6 +317,31 @@
     </div>
 
 </div>
+
+
+<script>
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+    const eyeIcon = togglePassword.querySelector("i");
+
+    togglePassword.addEventListener("click", function () {
+        const isHidden = passwordInput.type === "password";
+
+        passwordInput.type = isHidden ? "text" : "password";
+        eyeIcon.classList.toggle("fa-eye", !isHidden);
+        eyeIcon.classList.toggle("fa-eye-slash", isHidden);
+
+        togglePassword.setAttribute(
+            "aria-label",
+            isHidden ? "Hide password" : "Show password"
+        );
+
+        togglePassword.setAttribute("aria-pressed", String(isHidden));
+    });
+</script>
+</body>
+</html>
+
 
 </body>
 
