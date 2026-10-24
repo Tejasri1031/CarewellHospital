@@ -474,7 +474,7 @@
 
                                     <option value="<%= doctor.getDoctorId() %>">
 
-                                        Dr. <%= doctorUser.getFullName() %>
+                                         <%= doctorUser.getFullName() %>
                                         -
                                         <%= doctor.getSpecialization() %>
 

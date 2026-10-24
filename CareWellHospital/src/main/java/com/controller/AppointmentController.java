@@ -891,19 +891,21 @@ public class AppointmentController extends HttpServlet {
                             String subject =
                                     "CareWell Hospital - New Appointment Request";
 
-                            String body =
-                                    "A new appointment request has been received.\\n\\n"
-                                  + "Appointment ID: " + appointmentId + "\\n"
-                                  + "Patient: " + patientName + "\\n"
-                                  + "Doctor ID: " + appointment.getDoctorId() + "\\n"
-                                  + "Department ID: " + appointment.getDepartmentId() + "\\n"
-                                  + "Date: " + appointment.getAppointmentDate() + "\\n"
-                                  + "Time: " + appointment.getAppointmentTime() + "\\n"
-                                  + "Reason: " + appointment.getReason() + "\\n"
-                                  + "Status: PENDING\\n\\n"
-                                  + "Please sign in to CareWell Hospital to review "
-                                  + "and confirm or reject this appointment.\\n\\n"
-                                  + "Regards,\\nCareWell Hospital";
+
+							String body =
+							        "A new appointment request has been received.\n\n"
+							      + "Appointment ID: " + appointmentId + "\n"
+							      + "Patient: " + patientName + "\n"
+							      + "Doctor ID: " + appointment.getDoctorId() + "\n"
+							      + "Department ID: " + appointment.getDepartmentId() + "\n"
+							      + "Date: " + appointment.getAppointmentDate() + "\n"
+							      + "Time: " + appointment.getAppointmentTime() + "\n"
+							      + "Reason: " + appointment.getReason() + "\n"
+							      + "Status: PENDING\n\n"
+							      + "Please sign in to CareWell Hospital to review "
+							      + "and confirm or reject this appointment.\n\n"
+							      + "Regards,\nCareWell Hospital";
+
 
                             boolean emailSent = EmailService.sendEmail(
                                     hospitalEmail.trim(), subject, body);
