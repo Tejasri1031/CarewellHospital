@@ -7,4 +7,4 @@ COPY CareWellHospital.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 10000
 
-CMD ["sh", "-c", "sed -i 's/port=\"8080\"/port=\"10000\"/' /usr/local/tomcat/conf/server.xml && catalina.sh run"]
+CMD ["sh", "-c", "sed -i 's/port=\"8080\"/port=\"'\"${PORT:-10000}\"'\"/' /usr/local/tomcat/conf/server.xml && catalina.sh run"]
