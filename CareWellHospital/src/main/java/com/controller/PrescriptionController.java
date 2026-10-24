@@ -18,21 +18,27 @@ import com.dao.DoctorDAO;
 import com.dao.MedicineDAO;
 import com.dao.PrescriptionDAO;
 import com.dao.PrescriptionItemDAO;
+import com.dao.PatientDAO;
+import com.dao.UserDAO;
 
 import com.daoimpl.AppointmentDAOImpl;
 import com.daoimpl.DoctorDAOImpl;
 import com.daoimpl.MedicineDAOImpl;
 import com.daoimpl.PrescriptionDAOImpl;
 import com.daoimpl.PrescriptionItemDAOImpl;
+import com.daoimpl.PatientDAOImpl;
+import com.daoimpl.UserDAOImpl;
 
 import com.model.Appointment;
 import com.model.Doctor;
 import com.model.Medicine;
 import com.model.Prescription;
 import com.model.PrescriptionItem;
+import com.model.Patient;
 import com.model.User;
 
 import com.util.DBConnection;
+import com.util.EmailService;
 
 @WebServlet("/prescriptions")
 public class PrescriptionController extends HttpServlet {
@@ -44,6 +50,8 @@ public class PrescriptionController extends HttpServlet {
     private AppointmentDAO appointmentDAO;
     private DoctorDAO doctorDAO;
     private MedicineDAO medicineDAO;
+    private PatientDAO patientDAO;
+    private UserDAO userDAO;
 
     @Override
     public void init() throws ServletException {
@@ -52,6 +60,8 @@ public class PrescriptionController extends HttpServlet {
         appointmentDAO = new AppointmentDAOImpl();
         doctorDAO = new DoctorDAOImpl();
         medicineDAO = new MedicineDAOImpl();
+        patientDAO = new PatientDAOImpl();
+        userDAO = new UserDAOImpl();
     }
 
     @Override
@@ -277,6 +287,8 @@ public class PrescriptionController extends HttpServlet {
                 }
             }
 
+            int savedPrescriptionId = -1;
+
             try (Connection connection = DBConnection.getConnection()) {
 
                 connection.setAutoCommit(false);
@@ -291,11 +303,11 @@ public class PrescriptionController extends HttpServlet {
                     prescription.setInstructions(
                             request.getParameter("instructions"));
 
-                    int prescriptionId =
+                    savedPrescriptionId =
                             prescriptionDAO.addPrescription(
                                     connection, prescription);
 
-                    if (prescriptionId <= 0) {
+                    if (savedPrescriptionId <= 0) {
                         throw new java.sql.SQLException(
                                 "Could not save prescription.");
                     }
@@ -303,7 +315,7 @@ public class PrescriptionController extends HttpServlet {
                     for (int i = 0; i < medicineIds.length; i++) {
                         PrescriptionItem item = new PrescriptionItem();
 
-                        item.setPrescriptionId(prescriptionId);
+                        item.setPrescriptionId(savedPrescriptionId);
                         item.setMedicineId(
                                 Integer.parseInt(medicineIds[i]));
                         item.setDosage(dosages[i].trim());
@@ -329,6 +341,64 @@ public class PrescriptionController extends HttpServlet {
 
                     throw e;
                 }
+            }
+
+            // Notify the patient only after the prescription transaction commits.
+            // Email failure must not undo or misreport the saved prescription.
+            try {
+                Patient patient =
+                        patientDAO.getPatientById(appointment.getPatientId());
+
+                if (patient != null) {
+                    User patientUser = userDAO.getUserById(patient.getUserId());
+
+                    if (patientUser != null
+                            && patientUser.getEmail() != null
+                            && !patientUser.getEmail().trim().isEmpty()) {
+
+                        String patientName = patientUser.getFullName();
+                        if (patientName == null || patientName.trim().isEmpty()) {
+                            patientName = "Patient";
+                        }
+
+                        String subject =
+                                "CareWell Hospital - New Prescription Available";
+
+                        String body =
+                                "Dear " + patientName + ",\n\n"
+                              + "A new prescription has been added for your appointment.\n\n"
+                              + "Prescription ID: " + savedPrescriptionId + "\n"
+                              + "Prescription Date: " + prescriptionDate + "\n\n"
+                              + "Please sign in to CareWell Hospital to view your prescription securely.\n\n"
+                              + "Regards,\nCareWell Hospital";
+
+                        boolean emailSent = EmailService.sendEmail(
+                                patientUser.getEmail().trim(), subject, body);
+
+                        if (emailSent) {
+                            System.out.println(
+                                    "Prescription notification email sent for prescription ID: "
+                                    + savedPrescriptionId);
+                        } else {
+                            System.err.println(
+                                    "Prescription saved, but notification email failed for prescription ID: "
+                                    + savedPrescriptionId);
+                        }
+                    } else {
+                        System.err.println(
+                                "Prescription saved, but patient email is unavailable. Prescription ID: "
+                                + savedPrescriptionId);
+                    }
+                } else {
+                    System.err.println(
+                            "Prescription saved, but patient record was not found. Prescription ID: "
+                            + savedPrescriptionId);
+                }
+            } catch (Exception emailException) {
+                System.err.println(
+                        "Prescription saved, but notification email could not be sent. Prescription ID: "
+                        + savedPrescriptionId);
+                emailException.printStackTrace();
             }
 
             response.sendRedirect(
