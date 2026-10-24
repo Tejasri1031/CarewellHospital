@@ -1175,14 +1175,20 @@ public class AppointmentController extends HttpServlet {
                                         "CareWell Hospital - Appointment Confirmed";
 
 
-                                String body =
-                                        "Dear " + patientUser.getFullName() + ",\n\n"
-                                      + "Your appointment has been confirmed by the doctor.\n\n"
-                                      + "Appointment ID: " + appointment.getAppointmentId() + "\n"
-                                      + "Date: " + appointment.getAppointmentDate() + "\n"
-                                      + "Time: " + appointment.getAppointmentTime() + "\n\n"
-                                      + "Please arrive on time for your appointment.\n\n"
-                                      + "Regards,\nCareWell Hospital";
+
+
+								String body =
+								        "Your appointment has been confirmed.\n\n"
+								      + "Appointment ID: " + appointment.getAppointmentId() + "\n"
+								      + "Patient: " + patientUser.getFullName() + "\n"
+								      + "Doctor ID: " + appointment.getDoctorId() + "\n"
+								      + "Date: " + appointment.getAppointmentDate() + "\n"
+								      + "Time: " + appointment.getAppointmentTime() + "\n\n"
+								      + "Please arrive on time for your appointment.\n\n"
+								      + "Regards,\nCareWell Hospital";
+
+
+
 
                                 	
 
