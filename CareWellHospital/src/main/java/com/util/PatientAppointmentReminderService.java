@@ -31,8 +31,8 @@ public class PatientAppointmentReminderService {
             "reethuroyal67@gmail.com";
 
     private static final String BASE_URL =
-            "http://localhost:8080/CareWellHospital";
-
+            "https://your-actual-render-domain.onrender.com";
+    
     private static final ZoneId ZONE =
             ZoneId.of("Asia/Kolkata");
 

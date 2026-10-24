@@ -2,12 +2,14 @@
 package com.util;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class AppointmentEscalationService {
 
-    private static final String ADMIN_EMAIL =
+    // Test recipient for both admin and patient emails.
+    private static final String TEST_EMAIL =
             "reethuroyal67@gmail.com";
 
     public void processOverdueAppointments() {
@@ -15,152 +17,186 @@ public class AppointmentEscalationService {
         String sql =
                 "SELECT a.appointment_id, a.patient_id, a.doctor_id, "
               + "a.appointment_date, a.appointment_time, "
-              + "a.status, u.full_name, u.email, u.role "
+              + "a.status, u.full_name, u.role "
               + "FROM appointments a "
               + "JOIN patients p ON a.patient_id = p.patient_id "
               + "JOIN users u ON p.user_id = u.user_id "
               + "WHERE a.response_due_at <= NOW() "
-              + "AND ( "
-              + "a.status = 'PENDING' "
+              + "AND (a.status = 'PENDING' "
               + "OR (a.status = 'CANCELLED' "
-              + "AND a.patient_notified_at IS NULL) "
-              + ")";
+              + "AND a.patient_notified_at IS NULL))";
 
         System.out.println(
                 "Appointment escalation service running at: "
-                + new java.util.Date()
-        );
+                + new java.util.Date());
+
+        int foundCount = 0;
 
         try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            while (rs.next()) {
+            System.out.println(
+                    "DEBUG: Database = " + con.getCatalog());
+            try (PreparedStatement debugPs = con.prepareStatement(
+                    "SELECT appointment_id, status, response_due_at, "
+                  + "patient_notified_at, NOW() AS db_now "
+                  + "FROM appointments WHERE appointment_id = 23");
+                 ResultSet debugRs = debugPs.executeQuery()) {
 
-                int appointmentId =
-                        rs.getInt("appointment_id");
-
-                int patientId = rs.getInt("patient_id");
-                int doctorId = rs.getInt("doctor_id");
-
-                String status = rs.getString("status");
-                String patientName = rs.getString("full_name");
-                String patientEmail = rs.getString("email");
-                String role = rs.getString("role");
-
-                String appointmentDate =
-                        rs.getDate("appointment_date").toString();
-
-                String appointmentTime =
-                        rs.getTime("appointment_time").toString();
-
-                // Process only actual patient accounts.
-                if (!"PATIENT".equalsIgnoreCase(role)) {
-                    continue;
+                if (debugRs.next()) {
+                    System.out.println(
+                            "DEBUG appointment 23: status="
+                            + debugRs.getString("status")
+                            + ", deadline="
+                            + debugRs.getTimestamp("response_due_at")
+                            + ", dbNow="
+                            + debugRs.getTimestamp("db_now")
+                            + ", notified="
+                            + debugRs.getTimestamp("patient_notified_at"));
+                } else {
+                    System.out.println(
+                            "DEBUG: Appointment 23 does not exist "
+                            + "in this application's database.");
                 }
+            }
 
-                // 1. Escalate to admin and cancel overdue appointments.
-                if ("PENDING".equalsIgnoreCase(status)) {
+            System.out.println(
+                    "DEBUG: Running overdue appointment query.");
 
-                    if (!isNotifiedAdmin(appointmentId)) {
+            try (ResultSet rs = ps.executeQuery()) {
 
-                        String adminSubject =
-                                "CareWell: Appointment requires attention";
+                System.out.println(
+                        "DEBUG: Query executed. Checking results.");
 
-                        String adminBody =
-                                "An appointment has passed its response deadline.\n\n"
-                              + "Appointment ID: " + appointmentId + "\n"
-                              + "Patient: " + patientName + "\n"
-                              + "Patient ID: " + patientId + "\n"
-                              + "Doctor ID: " + doctorId + "\n"
-                              + "Appointment date: " + appointmentDate + "\n"
-                              + "Appointment time: " + appointmentTime + "\n\n"
-                              + "The appointment is still pending. "
-                              + "Please review the delayed response.";
+                while (rs.next()) {
 
-                        if (EmailService.sendEmail(
-                                ADMIN_EMAIL, adminSubject, adminBody)) {
+                    foundCount++;
 
-                            markAsEscalated(appointmentId);
+                    int appointmentId =
+                            rs.getInt("appointment_id");
 
-                            System.out.println(
-                                    "Admin escalation email sent for appointment: "
-                                    + appointmentId
-                            );
-                        }
-                    }
+                    System.out.println(
+                            "DEBUG: Overdue appointment found: "
+                            + appointmentId);
 
-                    // Cancel only if it is still pending and overdue.
-                    if (!cancelPendingAppointment(appointmentId)) {
+                    int patientId = rs.getInt("patient_id");
+                    int doctorId = rs.getInt("doctor_id");
 
+                    String status = rs.getString("status");
+                    String patientName = rs.getString("full_name");
+                    String role = rs.getString("role");
+
+                    String appointmentDate =
+                            rs.getDate("appointment_date").toString();
+
+                    String appointmentTime =
+                            rs.getTime("appointment_time").toString();
+
+                    if (!"PATIENT".equalsIgnoreCase(role)) {
                         System.out.println(
-                                "Appointment was not cancelled: "
-                                + appointmentId
-                        );
-
-                        // The status may have changed while processing.
+                                "Skipping appointment " + appointmentId
+                                + ": linked account role is " + role);
                         continue;
                     }
 
-                    System.out.println(
-                            "Appointment automatically cancelled: "
-                            + appointmentId
-                    );
-                }
+                    // 1. Escalate pending appointments to the test admin inbox.
+                    if ("PENDING".equalsIgnoreCase(status)) {
 
-                // 2. Send or retry the patient cancellation email.
-                // This block runs for newly cancelled appointments and
-                // previously cancelled appointments awaiting notification.
-                if (!isPatientNotified(appointmentId)
-                        && patientEmail != null
-                        && !patientEmail.trim().isEmpty()) {
+                        if (!isNotifiedAdmin(appointmentId)) {
 
-                    String patientSubject =
-                            "CareWell: Appointment automatically cancelled";
+                            String adminSubject =
+                                    "CareWell: Appointment requires attention";
 
-                    String patientBody =
-                            "Dear " + patientName + ",\n\n"
-                          + "Your CareWell appointment has been "
-                          + "automatically cancelled because the doctor "
-                          + "did not respond before the response deadline.\n\n"
-                          + "Appointment ID: " + appointmentId + "\n"
-                          + "Appointment date: " + appointmentDate + "\n"
-                          + "Appointment time: " + appointmentTime + "\n\n"
-                          + "Please log in to CareWell Hospital to book "
-                          + "another appointment or contact the hospital "
-                          + "for assistance.\n\n"
-                          + "We apologize for the inconvenience.\n\n"
-                          + "Regards,\nCareWell Hospital";
+                            String adminBody =
+                                    "An appointment has passed its response deadline.\n\n"
+                                  + "Appointment ID: " + appointmentId + "\n"
+                                  + "Patient: " + patientName + "\n"
+                                  + "Patient ID: " + patientId + "\n"
+                                  + "Doctor ID: " + doctorId + "\n"
+                                  + "Appointment date: " + appointmentDate + "\n"
+                                  + "Appointment time: " + appointmentTime + "\n\n"
+                                  + "The appointment is awaiting a doctor response.";
 
-                    if (EmailService.sendEmail(
-                            patientEmail, patientSubject, patientBody)) {
+                            if (EmailService.sendEmail(
+                                    TEST_EMAIL, adminSubject, adminBody)) {
 
-                        markPatientNotified(appointmentId);
+                                markAsEscalated(appointmentId);
+
+                                System.out.println(
+                                        "Admin escalation email sent for appointment: "
+                                        + appointmentId);
+                            } else {
+                                System.err.println(
+                                        "Admin escalation email failed for appointment: "
+                                        + appointmentId);
+                            }
+                        }
+
+                        // Cancel only if it is still pending and overdue.
+                        if (!cancelPendingAppointment(appointmentId)) {
+
+                            System.out.println(
+                                    "Appointment was not cancelled: "
+                                    + appointmentId);
+
+                            continue;
+                        }
 
                         System.out.println(
-                                "Patient cancellation email sent for appointment: "
-                                + appointmentId
-                        );
-                    } else {
-                        System.err.println(
-                                "Patient cancellation email failed for appointment: "
-                                + appointmentId
-                        );
+                                "Appointment automatically cancelled: "
+                                + appointmentId);
+                    }
+
+                    // 2. Notify the patient, or retry a failed notification.
+                    if (!isPatientNotified(appointmentId)) {
+
+                        String patientSubject =
+                                "CareWell: Appointment automatically cancelled";
+
+                        String patientBody =
+                                "Dear " + patientName + ",\n\n"
+                              + "Your CareWell appointment has been "
+                              + "automatically cancelled because the doctor "
+                              + "did not respond before the response deadline.\n\n"
+                              + "Appointment ID: " + appointmentId + "\n"
+                              + "Appointment date: " + appointmentDate + "\n"
+                              + "Appointment time: " + appointmentTime + "\n\n"
+                              + "Please log in to CareWell Hospital to book "
+                              + "another appointment or contact the hospital "
+                              + "for assistance.\n\n"
+                              + "We apologize for the inconvenience.\n\n"
+                              + "Regards,\nCareWell Hospital";
+
+                        if (EmailService.sendEmail(
+                                TEST_EMAIL, patientSubject, patientBody)) {
+
+                            markPatientNotified(appointmentId);
+
+                            System.out.println(
+                                    "Patient cancellation email sent for appointment: "
+                                    + appointmentId);
+                        } else {
+                            System.err.println(
+                                    "Patient cancellation email failed for appointment: "
+                                    + appointmentId);
+                        }
                     }
                 }
             }
 
+            System.out.println(
+                    "DEBUG: Total overdue appointments found: "
+                    + foundCount);
+
         } catch (Exception e) {
             System.err.println(
-                    "Appointment escalation processing failed."
-            );
-
-            System.err.println(
-                    "Appointment escalation error: " + e.getMessage()
-            );
+                    "Appointment escalation processing failed.");
 
             e.printStackTrace();
         }
+
+        System.out.println(
+                "Appointment escalation processing completed.");
     }
 
     private boolean isNotifiedAdmin(int appointmentId)
@@ -170,8 +206,7 @@ public class AppointmentEscalationService {
                 "SELECT escalated_at FROM appointments "
               + "WHERE appointment_id = ?",
                 appointmentId,
-                "escalated_at"
-        );
+                "escalated_at");
     }
 
     private boolean isPatientNotified(int appointmentId)
@@ -181,8 +216,7 @@ public class AppointmentEscalationService {
                 "SELECT patient_notified_at FROM appointments "
               + "WHERE appointment_id = ?",
                 appointmentId,
-                "patient_notified_at"
-        );
+                "patient_notified_at");
     }
 
     private boolean checkTimestamp(
@@ -217,7 +251,14 @@ public class AppointmentEscalationService {
 
             ps.setInt(1, appointmentId);
 
-            return ps.executeUpdate() == 1;
+            int rowsUpdated = ps.executeUpdate();
+
+            System.out.println(
+                    "DEBUG: Cancellation update affected "
+                    + rowsUpdated + " row(s) for appointment "
+                    + appointmentId);
+
+            return rowsUpdated == 1;
         }
     }
 
@@ -237,6 +278,13 @@ public class AppointmentEscalationService {
             int appointmentId, String column)
             throws Exception {
 
+        if (!"escalated_at".equals(column)
+                && !"patient_notified_at".equals(column)) {
+
+            throw new IllegalArgumentException(
+                    "Invalid timestamp column.");
+        }
+
         String sql =
                 "UPDATE appointments SET " + column
               + " = NOW() WHERE appointment_id = ?";
@@ -245,7 +293,19 @@ public class AppointmentEscalationService {
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, appointmentId);
-            ps.executeUpdate();
+
+            int rowsUpdated = ps.executeUpdate();
+
+            if (rowsUpdated != 1) {
+                throw new SQLException(
+                        "Expected to update one row for appointment "
+                        + appointmentId + ", but updated "
+                        + rowsUpdated + " rows.");
+            }
+
+            System.out.println(
+                    "DEBUG: Updated " + column
+                    + " for appointment " + appointmentId);
         }
     }
 }

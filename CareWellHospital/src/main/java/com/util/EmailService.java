@@ -20,8 +20,8 @@ public class EmailService {
             System.getenv("CAREWELL_EMAIL");
 
     private static final String SENDER_APP_PASSWORD =
-            System.getenv("CAREWELL_EMAIL_APP_PASSWORD");
-
+            System.getenv("CAREWELL_APP_PASSWORD");
+    
     public static boolean sendEmail(
             String recipientEmail,
             String subject,
@@ -31,11 +31,10 @@ public class EmailService {
                 || SENDER_APP_PASSWORD == null
                 || SENDER_APP_PASSWORD.isBlank()) {
 
-            System.err.println(
-                    "Email configuration error: "
-                    + "CAREWELL_EMAIL or "
-                    + "CAREWELL_EMAIL_APP_PASSWORD is missing.");
-
+        	System.err.println(
+        	        "Email configuration error: CAREWELL_EMAIL or "
+        	        + "CAREWELL_APP_PASSWORD is missing.");
+        	
             return false;
         }
 

@@ -41,8 +41,9 @@ String firstLetter = doctorName != null && !doctorName.isEmpty()
 
 <link rel="stylesheet"
       href="<%= request.getContextPath() %>/css/doctor-dashboard.css">
-      
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/doctor-medical-records.css">
+
+<link rel="stylesheet"
+      href="<%= request.getContextPath() %>/css/doctor-medical-records.css">
 
 </head>
 <body>

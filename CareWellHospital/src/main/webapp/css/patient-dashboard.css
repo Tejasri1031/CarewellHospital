@@ -42,11 +42,47 @@ a {
 
 
 
+/* =====================================
+   HEADER ACTIONS
+   Notification bell left of profile
+===================================== */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+
+.header-actions .notification-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: none;
+    border-radius: 11px;
+    background: #edf4ff;
+    color: var(--cw-blue);
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.header-actions .notification-button:hover {
+    background: #dceaff;
+}
+
 .notification-icon {
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1;
 }
 
+
+/* Unread notification count */
 .notification-count {
     position: absolute;
     top: -5px;
@@ -63,8 +99,10 @@ a {
     color: #fff;
     font-size: 10px;
     font-weight: 700;
+    line-height: 1;
 }
 
+/* Patient profile beside the bell */
 .header-actions .patient-info {
     display: flex;
     align-items: center;
@@ -72,6 +110,8 @@ a {
     min-width: 0;
     text-decoration: none;
 }
+
+
 
 .header-actions .patient-avatar {
     display: flex;
@@ -847,3 +887,4 @@ a {
         animation-duration: 0.01ms !important;
     }
 }
+

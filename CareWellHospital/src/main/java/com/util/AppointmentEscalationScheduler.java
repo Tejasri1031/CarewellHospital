@@ -1,6 +1,9 @@
 
 package com.util;
 
+import java.time.Duration;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,6 +15,9 @@ import jakarta.servlet.annotation.WebListener;
 @WebListener
 public class AppointmentEscalationScheduler
         implements ServletContextListener {
+
+    private static final ZoneId INDIA_ZONE =
+            ZoneId.of("Asia/Kolkata");
 
     private ScheduledExecutorService scheduler;
 
@@ -25,26 +31,54 @@ public class AppointmentEscalationScheduler
             return thread;
         });
 
-        scheduler.scheduleAtFixedRate(() -> {
-            System.out.println(
-                    "CareWell escalation task triggered at: "
-                    + new java.util.Date());
+        // Check overdue appointments immediately after startup.
+        scheduler.execute(this::runEscalationSafely);
 
-            try {
-                new AppointmentEscalationService()
-                        .processOverdueAppointments();
+        // Schedule the regular daily check for 6:00 PM India time.
+        ZonedDateTime now = ZonedDateTime.now(INDIA_ZONE);
 
-            } catch (Throwable e) {
-                System.err.println(
-                        "CareWell escalation task failed: "
-                        + e.getMessage());
-                e.printStackTrace();
-            }
+        ZonedDateTime nextRun = now.toLocalDate()
+                .atTime(18, 0)
+                .atZone(INDIA_ZONE);
 
-        }, 1, 60, TimeUnit.MINUTES);
+        if (!nextRun.isAfter(now)) {
+            nextRun = nextRun.plusDays(1);
+        }
+
+        long initialDelaySeconds =
+                Duration.between(now, nextRun).getSeconds();
+
+        long dailyIntervalSeconds = Duration.ofDays(1).getSeconds();
+
+        scheduler.scheduleAtFixedRate(
+                this::runEscalationSafely,
+                initialDelaySeconds,
+                dailyIntervalSeconds,
+                TimeUnit.SECONDS);
 
         System.out.println(
                 "CareWell appointment escalation scheduler started.");
+
+        System.out.println(
+                "Next cancellation check scheduled for: " + nextRun);
+    }
+
+    private void runEscalationSafely() {
+
+        System.out.println(
+                "CareWell escalation task triggered at: "
+                + ZonedDateTime.now(INDIA_ZONE));
+
+        try {
+            new AppointmentEscalationService()
+                    .processOverdueAppointments();
+
+        } catch (Exception e) {
+            System.err.println(
+                    "CareWell escalation task failed: "
+                    + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override

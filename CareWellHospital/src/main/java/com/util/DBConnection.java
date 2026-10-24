@@ -30,12 +30,25 @@ public class DBConnection {
 
         if (USER == null || USER.isBlank()
                 || PASSWORD == null || PASSWORD.isBlank()) {
+
             throw new SQLException(
                     "Database credentials are missing. "
                     + "Configure CAREWELL_DB_USER and "
                     + "CAREWELL_DB_PASSWORD.");
         }
 
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        Connection connection =
+                DriverManager.getConnection(URL, USER, PASSWORD);
+
+        // Temporary diagnostic logs to verify the database connection.
+        System.out.println(
+                "CareWell connected database: "
+                + connection.getCatalog());
+
+        System.out.println(
+                "CareWell database URL: "
+                + connection.getMetaData().getURL());
+
+        return connection;
     }
 }

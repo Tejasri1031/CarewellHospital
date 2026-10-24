@@ -1,3 +1,4 @@
+
 package com.daoimpl;
 
 import java.sql.Connection;
@@ -17,14 +18,12 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     @Override
     public boolean addAppointment(Appointment appointment) {
 
+        String sql = "INSERT INTO appointments "
+                + "(patient_id, doctor_id, department_id, appointment_date, "
+                + "appointment_time, reason, status, notes, response_due_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
+                + "TIMESTAMP(DATE_SUB(?, INTERVAL 1 DAY), '18:00:00'))";
 
-String sql = "INSERT INTO appointments "
-        + "(patient_id, doctor_id, department_id, appointment_date, "
-        + "appointment_time, reason, status, notes, response_due_at) "
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
-        + "DATE_SUB(TIMESTAMP(?, ?), INTERVAL 1 DAY))";
-
-    	
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
@@ -37,8 +36,9 @@ String sql = "INSERT INTO appointments "
             statement.setString(6, appointment.getReason());
             statement.setString(7, appointment.getStatus());
             statement.setString(8, appointment.getNotes());
+
+            // Deadline: 6:00 PM on the day before the appointment.
             statement.setDate(9, appointment.getAppointmentDate());
-            statement.setTime(10, appointment.getAppointmentTime());
 
             return statement.executeUpdate() > 0;
 
@@ -48,77 +48,39 @@ String sql = "INSERT INTO appointments "
 
         return false;
     }
-    
+
     @Override
     public int addAppointmentAndGetId(Appointment appointment) {
-    	
 
+        String sql = "INSERT INTO appointments "
+                + "(patient_id, doctor_id, department_id, appointment_date, "
+                + "appointment_time, reason, status, notes, response_due_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
+                + "TIMESTAMP(DATE_SUB(?, INTERVAL 1 DAY), '18:00:00'))";
 
-String sql = "INSERT INTO appointments "
-        + "(patient_id, doctor_id, department_id, appointment_date, "
-        + "appointment_time, reason, status, notes, response_due_at) "
-        + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
-        + "DATE_SUB(TIMESTAMP(?, ?), INTERVAL 1 DAY))";
-
-    	
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(
                              sql,
                              java.sql.Statement.RETURN_GENERATED_KEYS)) {
 
-            statement.setInt(
-                    1,
-                    appointment.getPatientId()
-            );
+            statement.setInt(1, appointment.getPatientId());
+            statement.setInt(2, appointment.getDoctorId());
+            statement.setInt(3, appointment.getDepartmentId());
+            statement.setDate(4, appointment.getAppointmentDate());
+            statement.setTime(5, appointment.getAppointmentTime());
+            statement.setString(6, appointment.getReason());
+            statement.setString(7, appointment.getStatus());
+            statement.setString(8, appointment.getNotes());
 
-            statement.setInt(
-                    2,
-                    appointment.getDoctorId()
-            );
-
-            statement.setInt(
-                    3,
-                    appointment.getDepartmentId()
-            );
-
-            statement.setDate(
-                    4,
-                    appointment.getAppointmentDate()
-            );
-
-            statement.setTime(
-                    5,
-                    appointment.getAppointmentTime()
-            );
-
-            statement.setString(
-                    6,
-                    appointment.getReason()
-            );
-
-            statement.setString(
-                    7,
-                    appointment.getStatus()
-            );
-
-            statement.setString(
-                    8,
-                    appointment.getNotes()
-            );
+            // Deadline: 6:00 PM on the day before the appointment.
             statement.setDate(9, appointment.getAppointmentDate());
-            statement.setTime(10, appointment.getAppointmentTime());
 
-            int rowsInserted =
-                    statement.executeUpdate();
+            int rowsInserted = statement.executeUpdate();
 
             if (rowsInserted > 0) {
-
-                try (ResultSet resultSet =
-                        statement.getGeneratedKeys()) {
-
+                try (ResultSet resultSet = statement.getGeneratedKeys()) {
                     if (resultSet.next()) {
-
                         return resultSet.getInt(1);
                     }
                 }
@@ -131,14 +93,11 @@ String sql = "INSERT INTO appointments "
         return -1;
     }
 
-
     @Override
     public Appointment getAppointmentById(int appointmentId) {
 
         String sql =
                 "SELECT * FROM appointments WHERE appointment_id = ?";
-
-        Appointment appointment = null;
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement =
@@ -146,39 +105,32 @@ String sql = "INSERT INTO appointments "
 
             statement.setInt(1, appointmentId);
 
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-
-                appointment = mapAppointment(resultSet);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapAppointment(resultSet);
+                }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return appointment;
+        return null;
     }
-
 
     @Override
     public List<Appointment> getAllAppointments() {
 
         String sql = "SELECT * FROM appointments";
-
         List<Appointment> appointments = new ArrayList<>();
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(sql);
-             ResultSet resultSet =
-                     statement.executeQuery()) {
+             ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-
-                appointments.add(
-                        mapAppointment(resultSet)
-                );
+                appointments.add(mapAppointment(resultSet));
             }
 
         } catch (Exception e) {
@@ -187,7 +139,6 @@ String sql = "INSERT INTO appointments "
 
         return appointments;
     }
-
 
     @Override
     public List<Appointment> getAppointmentsByPatient(int patientId) {
@@ -203,13 +154,10 @@ String sql = "INSERT INTO appointments "
 
             statement.setInt(1, patientId);
 
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-
-                appointments.add(
-                        mapAppointment(resultSet)
-                );
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointments.add(mapAppointment(resultSet));
+                }
             }
 
         } catch (Exception e) {
@@ -218,7 +166,6 @@ String sql = "INSERT INTO appointments "
 
         return appointments;
     }
-
 
     @Override
     public List<Appointment> getAppointmentsByDoctor(int doctorId) {
@@ -234,13 +181,10 @@ String sql = "INSERT INTO appointments "
 
             statement.setInt(1, doctorId);
 
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-
-                appointments.add(
-                        mapAppointment(resultSet)
-                );
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointments.add(mapAppointment(resultSet));
+                }
             }
 
         } catch (Exception e) {
@@ -250,7 +194,6 @@ String sql = "INSERT INTO appointments "
         return appointments;
     }
 
-    
     @Override
     public List<Appointment> getAppointmentsByDoctorAndDate(
             int doctorId,
@@ -316,8 +259,7 @@ String sql = "INSERT INTO appointments "
     }
 
     @Override
-    public List<Appointment> getAppointmentsByDate(
-            Date appointmentDate) {
+    public List<Appointment> getAppointmentsByDate(Date appointmentDate) {
 
         String sql =
                 "SELECT * FROM appointments WHERE appointment_date = ?";
@@ -330,13 +272,10 @@ String sql = "INSERT INTO appointments "
 
             statement.setDate(1, appointmentDate);
 
-            ResultSet resultSet = statement.executeQuery();
-
-            while (resultSet.next()) {
-
-                appointments.add(
-                        mapAppointment(resultSet)
-                );
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    appointments.add(mapAppointment(resultSet));
+                }
             }
 
         } catch (Exception e) {
@@ -346,13 +285,9 @@ String sql = "INSERT INTO appointments "
         return appointments;
     }
 
-
     /*
-     * Checks whether a doctor already has an appointment
-     * at the selected date and time.
-     *
-     * PENDING and CONFIRMED appointments block the slot.
-     * CANCELLED appointments do not block the slot.
+     * PENDING and CONFIRMED appointments block a slot.
+     * CANCELLED appointments do not block a slot.
      */
     @Override
     public boolean isSlotAvailable(
@@ -360,8 +295,7 @@ String sql = "INSERT INTO appointments "
             Date appointmentDate,
             Time appointmentTime) {
 
-        String sql =
-                "SELECT COUNT(*) "
+        String sql = "SELECT COUNT(*) "
                 + "FROM appointments "
                 + "WHERE doctor_id = ? "
                 + "AND appointment_date = ? "
@@ -376,13 +310,10 @@ String sql = "INSERT INTO appointments "
             statement.setDate(2, appointmentDate);
             statement.setTime(3, appointmentTime);
 
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-
-                int count = resultSet.getInt(1);
-
-                return count == 0;
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) == 0;
+                }
             }
 
         } catch (Exception e) {
@@ -392,12 +323,10 @@ String sql = "INSERT INTO appointments "
         return false;
     }
 
-
     @Override
     public boolean updateAppointment(Appointment appointment) {
 
-        String sql =
-                "UPDATE appointments SET "
+        String sql = "UPDATE appointments SET "
                 + "patient_id = ?, "
                 + "doctor_id = ?, "
                 + "department_id = ?, "
@@ -412,50 +341,15 @@ String sql = "INSERT INTO appointments "
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-            statement.setInt(
-                    1,
-                    appointment.getPatientId()
-            );
-
-            statement.setInt(
-                    2,
-                    appointment.getDoctorId()
-            );
-
-            statement.setInt(
-                    3,
-                    appointment.getDepartmentId()
-            );
-
-            statement.setDate(
-                    4,
-                    appointment.getAppointmentDate()
-            );
-
-            statement.setTime(
-                    5,
-                    appointment.getAppointmentTime()
-            );
-
-            statement.setString(
-                    6,
-                    appointment.getReason()
-            );
-
-            statement.setString(
-                    7,
-                    appointment.getStatus()
-            );
-
-            statement.setString(
-                    8,
-                    appointment.getNotes()
-            );
-
-            statement.setInt(
-                    9,
-                    appointment.getAppointmentId()
-            );
+            statement.setInt(1, appointment.getPatientId());
+            statement.setInt(2, appointment.getDoctorId());
+            statement.setInt(3, appointment.getDepartmentId());
+            statement.setDate(4, appointment.getAppointmentDate());
+            statement.setTime(5, appointment.getAppointmentTime());
+            statement.setString(6, appointment.getReason());
+            statement.setString(7, appointment.getStatus());
+            statement.setString(8, appointment.getNotes());
+            statement.setInt(9, appointment.getAppointmentId());
 
             return statement.executeUpdate() > 0;
 
@@ -465,7 +359,6 @@ String sql = "INSERT INTO appointments "
 
         return false;
     }
-
 
     @Override
     public boolean deleteAppointment(int appointmentId) {
@@ -488,51 +381,40 @@ String sql = "INSERT INTO appointments "
         return false;
     }
 
-
-    private Appointment mapAppointment(
-            ResultSet resultSet) throws Exception {
+    private Appointment mapAppointment(ResultSet resultSet)
+            throws Exception {
 
         Appointment appointment = new Appointment();
 
         appointment.setAppointmentId(
-                resultSet.getInt("appointment_id")
-        );
+                resultSet.getInt("appointment_id"));
 
         appointment.setPatientId(
-                resultSet.getInt("patient_id")
-        );
+                resultSet.getInt("patient_id"));
 
         appointment.setDoctorId(
-                resultSet.getInt("doctor_id")
-        );
+                resultSet.getInt("doctor_id"));
 
         appointment.setDepartmentId(
-                resultSet.getInt("department_id")
-        );
+                resultSet.getInt("department_id"));
 
         appointment.setAppointmentDate(
-                resultSet.getDate("appointment_date")
-        );
+                resultSet.getDate("appointment_date"));
 
         appointment.setAppointmentTime(
-                resultSet.getTime("appointment_time")
-        );
+                resultSet.getTime("appointment_time"));
 
         appointment.setReason(
-                resultSet.getString("reason")
-        );
+                resultSet.getString("reason"));
 
         appointment.setStatus(
-                resultSet.getString("status")
-        );
+                resultSet.getString("status"));
 
         appointment.setNotes(
-                resultSet.getString("notes")
-        );
+                resultSet.getString("notes"));
 
         appointment.setCreatedAt(
-                resultSet.getTimestamp("created_at")
-        );
+                resultSet.getTimestamp("created_at"));
 
         return appointment;
     }

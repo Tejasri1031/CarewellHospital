@@ -1,22 +1,21 @@
+
 @charset "UTF-8";
 
+/* =========================================
+   CAREWELL - DOCTOR PROFILE
+   Clean blue and white design
+   ========================================= */
 
-
-/* =========================
-   MAIN LAYOUT
-   ========================= */
+* {
+    box-sizing: border-box;
+}
 
 .doctor-layout {
     display: flex;
     min-height: 100vh;
 }
 
-
-
-/* =========================
-   MAIN CONTENT
-   ========================= */
-
+/* Main content */
 .main-content {
     flex: 1;
     min-width: 0;
@@ -25,86 +24,115 @@
     min-height: 100vh;
 }
 
-
-/* =========================
-   PROFILE SECTION
-   ========================= */
-
+/* Profile page spacing */
 .profile-section {
-    padding: 34px;
     flex: 1;
+    padding: 30px;
+    background: #f3f7fd;
 }
 
+/* Main profile card */
 .profile-card {
-    background: #ffffff;
-    border: 1px solid #e2e9f2;
-    border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(33, 65, 105, 0.06);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
     overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e2eaf5;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(29, 78, 160, 0.07);
 }
 
-
-/* =========================
-   PROFILE HEADER
-   ========================= */
-
+/* Doctor banner */
 .profile-header {
-    padding: 30px 32px;
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 22px;
-    border-bottom: 1px solid #e8edf4;
+    gap: 24px;
+    min-height: 170px;
+    padding: 32px 36px;
+    overflow: hidden;
+    border: none;
+    border-radius: 0;
     background: linear-gradient(
-        135deg,
-        #f8fbff 0%,
-        #ffffff 100%
+        115deg,
+        #2856df 0%,
+        #176fc5 55%,
+        #0787a8 100%
     );
 }
 
-.large-avatar {
-    width: 88px;
-    height: 88px;
+/* Subtle decorative circle */
+.profile-header::after {
+    position: absolute;
+    top: -85px;
+    right: 13%;
+    width: 220px;
+    height: 220px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
     border-radius: 50%;
-    background: linear-gradient(135deg, #2675f5, #10a8cb);
-    color: #ffffff;
+    content: "";
+    pointer-events: none;
+}
+
+/* Keep banner content above decoration */
+.profile-header > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Doctor initial */
+.large-avatar {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
+    width: 88px;
+    height: 88px;
+    border: 2px solid rgba(255, 255, 255, 0.48);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    color: #ffffff;
     font-size: 32px;
-    font-weight: bold;
-    box-shadow: 0 8px 18px rgba(38, 117, 245, 0.2);
+    font-weight: 750;
 }
 
+/* Doctor name */
 .profile-header h2 {
-    color: #14243e;
-    font-size: 24px;
-    margin-bottom: 7px;
+    margin: 0 0 8px;
+    color: #ffffff;
+    font-size: 27px;
+    font-weight: 750;
+    line-height: 1.35;
 }
 
+/* Specialization and qualification */
 .profile-header p {
-    color: #617591;
+    margin: 0 0 12px;
+    color: #eaf3ff;
     font-size: 14px;
-    margin-bottom: 10px;
+    line-height: 1.7;
 }
 
+/* Availability badge */
 .availability-badge {
-    display: inline-block;
-    padding: 5px 11px;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 20px;
-    background: #e8f8ef;
-    color: #16864a;
+    background: #dcfce7;
+    color: #166534;
     font-size: 11px;
-    font-weight: bold;
+    font-weight: 750;
 }
 
-
-/* =========================
-   INFORMATION SECTION
-   ========================= */
-
+/* Information sections */
 .information-section {
-    padding: 28px 32px;
-    border-bottom: 1px solid #e8edf4;
+    padding: 30px 34px;
+    border-bottom: 1px solid #e8eef7;
+    background: #ffffff;
 }
 
 .information-section:last-child {
@@ -112,101 +140,136 @@
 }
 
 .information-section h3 {
-    font-size: 17px;
-    color: #172b4d;
-    margin-bottom: 22px;
+    margin: 0 0 22px;
+    color: #17345f;
+    font-size: 18px;
+    font-weight: 750;
 }
 
+/* Two-column information layout */
 .information-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(250px, 1fr));
-    gap: 20px 30px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
 }
 
+/* Individual information cards */
 .information-item {
-    background: #f8fafc;
-    border: 1px solid #e7edf5;
-    border-radius: 10px;
-    padding: 15px 17px;
+    min-width: 0;
+    padding: 20px 22px;
+    border: 1px solid #e1eaf7;
+    border-radius: 12px;
+    background: #f7faff;
+    transition: background 0.2s ease,
+                border-color 0.2s ease,
+                transform 0.2s ease;
 }
 
+.information-item:hover {
+    transform: translateY(-2px);
+    border-color: #c6d9f7;
+    background: #f0f6ff;
+}
+
+/* Information labels */
 .information-item label {
     display: block;
-    color: #7a8da7;
+    margin: 0 0 10px;
+    color: #7185a3;
     font-size: 11px;
-    font-weight: bold;
-    text-transform: uppercase;
+    font-weight: 750;
     letter-spacing: 0.7px;
-    margin-bottom: 8px;
+    text-transform: uppercase;
 }
 
+/* Information values */
 .information-item p {
-    color: #203452;
+    margin: 0;
+    color: #183153;
     font-size: 14px;
     font-weight: 600;
-    word-break: break-word;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
-
-/* =========================
-   BIO
-   ========================= */
-
+/* Doctor biography */
 .bio-box {
+    padding: 18px 20px;
+    border: 1px solid #dce9fb;
+    border-left: 4px solid #2872df;
+    border-radius: 10px;
     background: #f5f9ff;
-    border-left: 4px solid #2675f5;
-    border-radius: 8px;
-    padding: 16px 18px;
 }
 
 .bio-box p {
-    color: #536782;
+    margin: 0;
+    color: #435976;
     font-size: 14px;
-    line-height: 1.7;
+    line-height: 1.8;
 }
 
 .bio-box .empty-bio {
-    color: #8a9ab0;
+    color: #8292a8;
     font-style: italic;
 }
 
-
-
-/* =========================
-   RESPONSIVE
-   ========================= */
-
+/* Tablet */
 @media (max-width: 900px) {
-
-
-
     .profile-section {
-        padding: 24px;
+        padding: 22px;
+    }
+
+    .information-section {
+        padding: 26px;
     }
 
     .information-grid {
-        grid-template-columns: 1fr;
+        gap: 14px;
     }
 }
 
-
+/* Mobile */
 @media (max-width: 700px) {
-
     .doctor-layout {
         flex-direction: column;
     }
 
-
-
     .profile-section {
-        padding: 15px;
+        padding: 14px;
     }
 
     .profile-header {
-        padding: 24px;
+        align-items: flex-start;
+        gap: 16px;
+        min-height: auto;
+        padding: 24px 20px;
+    }
+
+    .large-avatar {
+        width: 64px;
+        height: 64px;
+        font-size: 25px;
+    }
+
+    .profile-header h2 {
+        font-size: 21px;
+        overflow-wrap: anywhere;
+    }
+
+    .profile-header p {
+        font-size: 12px;
     }
 
     .information-section {
-        padding: 24px;
+        padding: 22px 18px;
+    }
+
+    .information-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .information-item {
+        padding: 16px;
     }
 }

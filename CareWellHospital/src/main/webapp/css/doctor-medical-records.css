@@ -1,13 +1,36 @@
 
 @charset "UTF-8";
 
-/* =========================
-   RECORD COUNT
-   ========================= */
+/* Medical Records Page */
+
+.content-area {
+    padding-top: 24px;
+}
+
+/* Page Heading */
+
+.page-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.page-title h2 {
+    margin: 0 0 6px;
+}
+
+.page-title p {
+    margin: 0;
+}
+
+/* Record Count */
 
 .record-count {
-    min-width: 155px;
-    padding: 15px 20px;
+    flex: 0 0 auto;
+    min-width: 125px;
+    padding: 13px 18px;
     background: #ffffff;
     border: 1px solid #e4eaf2;
     border-radius: 12px;
@@ -16,9 +39,9 @@
 
 .record-count strong {
     display: block;
+    margin-bottom: 4px;
     color: #176ce5;
     font-size: 23px;
-    margin-bottom: 4px;
 }
 
 .record-count span {
@@ -26,247 +49,351 @@
     font-size: 12px;
 }
 
-/* =========================
-   TABLE CARD
-   ========================= */
+/* Records List */
 
-.table-card {
+.records-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+}
+
+/* Medical Record Card */
+
+.record-card {
+    min-width: 0;
+    overflow: hidden;
     background: #ffffff;
     border: 1px solid #e4eaf2;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 5px 18px rgba(35, 54, 85, 0.05);
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(35, 54, 85, 0.045);
 }
 
-.table-header {
-    min-height: 75px;
-    padding: 18px 24px;
+.record-card-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 15px 20px;
     border-bottom: 1px solid #e8edf4;
+    background: #fbfcfe;
 }
 
-.table-header h3 {
-    font-size: 17px;
-    color: #172033;
-    margin-bottom: 5px;
+.record-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
 }
 
-.table-header p {
-    color: #7b89a1;
-    font-size: 12px;
-}
-
-.table-container {
-    width: 100%;
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 1100px;
-}
-
-thead {
-    background: #f8fafc;
-}
-
-th {
-    height: 52px;
-    padding: 0 18px;
-    text-align: left;
-    color: #60708b;
-    font-size: 11px;
-    letter-spacing: 0.8px;
-    font-weight: 700;
-    border-bottom: 1px solid #e5eaf1;
-}
-
-td {
-    padding: 18px;
-    color: #40516d;
-    font-size: 13px;
-    border-bottom: 1px solid #edf1f5;
-    white-space: nowrap;
-    vertical-align: middle;
-}
-
-tbody tr {
-    transition: 0.2s ease;
-}
-
-tbody tr:hover {
-    background: #f9fbfd;
-}
-
-tbody tr:last-child td {
-    border-bottom: none;
-}
-
-td strong {
-    color: #182238;
-    font-weight: 700;
-}
-
-/* =========================
-   DIAGNOSIS
-   ========================= */
-
-.diagnosis {
-    display: inline-block;
-    padding: 7px 11px;
+.record-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     background: #eef5ff;
     color: #176ce5;
-    border-radius: 7px;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 19px;
+    font-weight: 700;
 }
 
-/* =========================
-   NO DATA
-   ========================= */
-
-.no-data {
-    text-align: center;
-    padding: 55px 20px;
-    color: #8996aa;
-    font-size: 14px;
-}
-
-/* =========================
-   PRESCRIPTIONS UNDER RECORDS
-   ========================= */
-
-.prescription-row > td {
-    padding: 16px 20px;
-    background: #f8fafc;
-    white-space: normal;
-}
-
-.record-prescriptions h4 {
-    margin-bottom: 14px;
+.record-identity h3 {
+    margin: 0 0 4px;
     color: #182238;
     font-size: 15px;
 }
 
-.prescription-card {
-    margin-bottom: 12px;
-    padding: 16px;
-    background: #ffffff;
-    border: 1px solid #e4eaf2;
-    border-radius: 10px;
-}
-
-.prescription-card:last-child {
-    margin-bottom: 0;
-}
-
-.prescription-card h5 {
-    margin-bottom: 10px;
-    color: #176ce5;
-    font-size: 14px;
-}
-
-.prescription-card p {
-    margin: 6px 0;
-    color: #40516d;
+.record-identity p {
+    margin: 0;
+    color: #7b89a1;
     font-size: 12px;
-    line-height: 1.6;
+}
+
+/* Patient Information */
+
+.patient-block {
+    min-width: 0;
+    text-align: right;
+}
+
+.patient-block span {
+    display: block;
+    margin-bottom: 4px;
+    color: #8996aa;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+}
+
+.patient-block strong {
+    color: #176ce5;
+    font-size: 12px;
     overflow-wrap: anywhere;
 }
 
-.medicine-list {
+/* Record Details */
+
+.record-body {
+    padding: 17px 20px 19px;
+}
+
+.main-details {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.detail-label {
+    margin: 0 0 7px;
+    color: #71819a;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.detail-box {
+    min-height: 42px;
+    padding: 11px 13px;
+    background: #f8fafc;
+    border: 1px solid #e4eaf2;
+    border-radius: 8px;
+    color: #40516d;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.diagnosis-box {
+    border-left: 3px solid #19a974;
+    background: #eff8f3;
+    color: #14784f;
+    font-weight: 600;
+}
+
+/* Vital Signs */
+
+.vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
     margin-top: 12px;
 }
 
-.medicine-item {
-    padding: 12px;
+.vital-box {
+    min-width: 0;
+    padding: 10px 12px;
     background: #f8fafc;
-    border: 1px solid #edf1f5;
+    border: 1px solid #e4eaf2;
     border-radius: 8px;
 }
 
-.medicine-item > strong {
+.vital-box span {
+    display: block;
+    margin-bottom: 4px;
+    color: #7b89a1;
+    font-size: 11px;
+}
+
+.vital-box strong {
     color: #182238;
     font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+/* Prescriptions Heading */
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 18px 0 9px;
+}
+
+.section-heading h4 {
+    margin: 0;
+    color: #71819a;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.section-heading span {
+    color: #8996aa;
+    font-size: 11px;
+}
+
+/* Prescription Cards */
+
+.prescriptions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 11px;
+    align-items: start;
+}
+
+.prescription-card {
+    min-width: 0;
+    padding: 12px;
+    background: #fbfcfe;
+    border: 1px solid #e2eaf4;
+    border-radius: 9px;
+}
+
+.prescription-card h5 {
+    margin: 0 0 5px;
+    color: #176ce5;
+    font-size: 13px;
+}
+
+.prescription-date {
+    margin: 0 0 9px;
+    color: #7b89a1;
+    font-size: 11px;
+}
+
+/* Medicines */
+
+.medicine-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+}
+
+.medicine-item {
+    min-width: 0;
+    padding: 9px 10px;
+    background: #ffffff;
+    border: 1px solid #e8edf4;
+    border-radius: 7px;
+}
+
+.medicine-item > strong {
+    display: block;
+    margin-bottom: 5px;
+    color: #182238;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.medicine-item p {
+    margin: 3px 0;
+    color: #40516d;
+    font-size: 11px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
 }
 
 .general-instructions {
-    margin-top: 12px !important;
+    margin-top: 9px !important;
+    padding-top: 8px;
+    border-top: 1px solid #e8edf4;
+    color: #40516d;
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
 }
+
+/* Doctor's Notes */
+
+.doctor-notes {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 11px 13px;
+    border: 1px solid #dbe9ff;
+    border-radius: 9px;
+    background: #f2f7ff;
+}
+
+.doctor-notes strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #526b8c;
+    font-size: 10px;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.doctor-notes p {
+    margin: 0;
+    color: #40516d;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Empty States */
 
 .no-prescription {
+    padding: 12px;
+    border: 1px dashed #d9e1ec;
+    border-radius: 8px;
     color: #8996aa;
-    font-size: 13px;
+    font-size: 12px;
 }
 
-/* =========================
-   RESPONSIVE
-   ========================= */
+.empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: #8996aa;
+}
 
-@media (max-width: 1200px) {
+.empty-state strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #40516d;
+}
+
+/* Footer */
+
+.content-area + footer {
+    padding: 18px 0 4px;
+    text-align: center;
+    color: #8996aa;
+    font-size: 11px;
+}
+
+/* Responsive Layout */
+
+@media (max-width: 850px) {
+    .main-details {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
     .content-area {
-        padding: 25px;
+        padding: 15px;
     }
-}
 
-@media (max-width: 800px) {
+    .page-title {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
     .record-count {
-        min-width: 120px;
+        min-width: 90px;
+        padding: 9px;
     }
 
-    .prescription-row > td {
-        padding: 12px;
+    .record-card-header {
+        align-items: flex-start;
+        padding: 13px;
     }
 
-    .medicine-list {
-        grid-template-columns: 1fr;
+    .record-body {
+        padding: 13px;
     }
-    
-.content-area{padding-top:24px}
-.page-title{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}
-.page-title h2{margin:0 0 6px}.page-title p{margin:0}
-.record-count{flex:0 0 auto;min-width:125px;padding:13px 18px}
-.records-list{display:grid;grid-template-columns:1fr;gap:16px}
-.record-card{background:#fff;border:1px solid #e4eaf2;border-radius:14px;overflow:hidden;box-shadow:0 4px 15px rgba(35,54,85,.045)}
-.record-card-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 20px;border-bottom:1px solid #e8edf4;background:#fbfcfe}
-.record-identity{display:flex;align-items:center;gap:12px;min-width:0}
-.record-icon{width:38px;height:38px;flex:0 0 38px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#eef5ff;color:#176ce5;font-size:19px;font-weight:700}
-.record-identity h3{margin:0 0 4px;color:#182238;font-size:15px}
-.record-identity p{margin:0;color:#7b89a1;font-size:12px}
-.patient-block{text-align:right;min-width:0}.patient-block span{display:block;margin-bottom:4px;color:#8996aa;font-size:10px;font-weight:700;letter-spacing:.7px}.patient-block strong{color:#176ce5;font-size:12px;overflow-wrap:anywhere}
-.record-body{padding:17px 20px 19px}
-.main-details{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
-.detail-label{margin:0 0 7px;color:#71819a;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
-.detail-box{padding:11px 13px;background:#f8fafc;border:1px solid #e4eaf2;border-radius:8px;color:#40516d;font-size:13px;line-height:1.5;overflow-wrap:anywhere;min-height:42px}
-.diagnosis-box{border-left:3px solid #19a974;background:#eff8f3;color:#14784f;font-weight:600}
-.vitals-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
-.vital-box{padding:10px 12px;background:#f8fafc;border:1px solid #e4eaf2;border-radius:8px;min-width:0}
-.vital-box span{display:block;color:#7b89a1;font-size:11px;margin-bottom:4px}.vital-box strong{color:#182238;font-size:13px;overflow-wrap:anywhere}
-.section-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 9px}
-.section-heading h4{margin:0;color:#71819a;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
-.section-heading span{color:#8996aa;font-size:11px}
-.prescriptions-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:11px;align-items:start}
-.prescription-card{min-width:0;padding:12px;background:#fbfcfe;border:1px solid #e2eaf4;border-radius:9px}
-.prescription-card h5{margin:0 0 5px;color:#176ce5;font-size:13px}
-.prescription-date{margin:0 0 9px;color:#7b89a1;font-size:11px}
-.medicine-list{display:grid;grid-template-columns:1fr;gap:7px}
-.medicine-item{padding:9px 10px;background:#fff;border:1px solid #e8edf4;border-radius:7px;min-width:0}
-.medicine-item>strong{display:block;margin-bottom:5px;color:#182238;font-size:12px;overflow-wrap:anywhere}
-.medicine-item p{margin:3px 0;color:#40516d;font-size:11px;line-height:1.45;overflow-wrap:anywhere}
-.general-instructions{margin-top:9px;padding-top:8px;border-top:1px solid #e8edf4;color:#40516d;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
-.doctor-notes{display:flex;gap:10px;margin-top:14px;padding:11px 13px;border:1px solid #dbe9ff;border-radius:9px;background:#f2f7ff}
-.doctor-notes strong{display:block;margin-bottom:4px;color:#526b8c;font-size:10px;letter-spacing:.7px;text-transform:uppercase}
-.doctor-notes p{margin:0;color:#40516d;font-size:12px;line-height:1.5}
-.no-prescription{padding:12px;border:1px dashed #d9e1ec;border-radius:8px;color:#8996aa;font-size:12px}
-.empty-state{padding:40px 20px;text-align:center;color:#8996aa}
-.empty-state strong{display:block;margin-bottom:6px;color:#40516d}
-footer{padding:18px 0 4px;text-align:center;color:#8996aa;font-size:11px}
-@media(max-width:850px){.main-details{grid-template-columns:1fr}.vitals-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:600px){.content-area{padding:15px}.page-title{align-items:flex-start}.record-count{min-width:90px;padding:9px}.record-card-header{align-items:flex-start;padding:13px}.record-body{padding:13px}.vitals-grid{grid-template-columns:1fr}.prescriptions-list{grid-template-columns:1fr}}
 
+    .vitals-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .prescriptions-list {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
