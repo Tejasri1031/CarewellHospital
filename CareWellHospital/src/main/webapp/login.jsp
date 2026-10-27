@@ -252,38 +252,21 @@
     </div>
 </div>
                 
-
-
-                <!-- Remember / Forgot -->
-
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    margin-bottom:18px;
-                    font-size:11px;
-                ">
-
-                    <label style="
-                        display:flex;
-                        align-items:center;
-                        gap:6px;
-                        color:#64748b;
-                    ">
-
-                        <input type="checkbox">
-
-                        Remember me
-
-                    </label>
-
-
-                   <a href="${pageContext.request.contextPath}/forgot-password"
-   style="color: #2563eb; font-weight: 600;">
-    Forgot Password?
-</a>
-
-                </div>
+				
+<!-- Forgot Password -->
+<div style="
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 18px;
+    font-size: 11px;
+">
+    <a href="${pageContext.request.contextPath}/forgot-password"
+       style="color: #2563eb; font-weight: 600;">
+        Forgot Password?
+    </a>
+</div>
+				
 
 
                 <!-- Login Button -->
