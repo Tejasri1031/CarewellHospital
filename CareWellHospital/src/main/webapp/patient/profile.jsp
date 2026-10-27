@@ -94,29 +94,44 @@
             </div>
 
             
+				
 <div class="profile-menu">
     <button type="button"
             class="profile-menu-button"
             id="profileMenuButton"
             aria-expanded="false"
             aria-controls="profileDropdown">
-        <!-- Keep your existing avatar, name and patient ID here -->
-        <span class="profile-menu-avatar">R</span>
-        <span class="profile-menu-user">
-            <strong>Rahul Kumar</strong>
-            <span>Patient #1</span>
+
+        <span class="profile-menu-avatar">
+            <%= escapeHtml(initial) %>
         </span>
+
+        <span class="profile-menu-user">
+            <strong><%= escapeHtml(fullName) %></strong>
+            <span>Patient #<%= patient.getPatientId() %></span>
+        </span>
+
         <span class="profile-menu-arrow">▾</span>
     </button>
 
     <div class="profile-dropdown" id="profileDropdown" hidden>
-        <a href="update-profile.jsp">✏️ Update Details</a>
-        <a href="change-password.jsp">🔒 Change Password</a>
+        <a href="<%= context %>/patient/update-profile.jsp">
+            ✏️ Update Details
+        </a>
+
+        <a href="<%= context %>/patient/change-password.jsp">
+            🔒 Change Password
+        </a>
+
         <div class="profile-dropdown-divider"></div>
+
         <a class="profile-dropdown-logout"
-           href="../LogoutController">↪ Logout</a>
+           href="<%= context %>/LogoutController">
+            ↪ Logout
+        </a>
     </div>
 </div>
+				
             
         </header>
 
