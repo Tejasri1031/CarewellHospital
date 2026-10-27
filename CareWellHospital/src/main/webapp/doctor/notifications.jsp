@@ -37,16 +37,21 @@
         }
     }
 
-    // Load notifications without automatically marking them as read.
+ // Initialize notification DAO
     NotificationDAO notificationDAO = new NotificationDAOImpl();
 
+    // Mark all notifications belonging to the logged-in doctor as read
+    notificationDAO.markAllAsRead(user.getUserId());
+
+    // Retrieve this doctor's notifications
     List<Notification> notifications =
-            notificationDAO.getNotificationsByUser(userId);
+            notificationDAO.getNotificationsByUser(user.getUserId());
 
+    // Get the updated unread count
     int unreadCount =
-            notificationDAO.getUnreadNotificationCount(userId);
+            notificationDAO.getUnreadNotificationCount(user.getUserId());
 
-    // Format timestamps for display.
+    // Format timestamps for display
     SimpleDateFormat dateFormat =
             new SimpleDateFormat("dd MMM yyyy, hh:mm a");
 %>
