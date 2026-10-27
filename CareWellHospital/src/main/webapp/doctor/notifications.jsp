@@ -66,9 +66,9 @@
 
     <link rel="stylesheet"
           href="<%= request.getContextPath() %>/css/doctor-common.css">
-
+          
     <link rel="stylesheet"
-          href="<%= request.getContextPath() %>/css/doctor-notification.css">
+      href="<%= request.getContextPath() %>/css/doctor-notifications.css">
 
     <link rel="stylesheet"
           href="<%= request.getContextPath() %>/css/doctor-dashboard.css">
