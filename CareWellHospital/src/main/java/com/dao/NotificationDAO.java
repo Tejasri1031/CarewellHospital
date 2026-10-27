@@ -14,7 +14,7 @@ public interface NotificationDAO {
 
     int getUnreadNotificationCount(int userId);
 
-    boolean markAsRead(int notificationId);
+    boolean markAsRead(int notificationId, int userId);
 
     boolean markAllAsRead(int userId);
 
