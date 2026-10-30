@@ -6,17 +6,21 @@ import com.model.User;
 
 public interface UserDAO {
 
-    boolean addUser(User user);
+	boolean addUser(User user);
 
-    User getUserById(int userId);
+	User getUserById(int userId);
 
-    User getUserByEmail(String email);
+	User getUserByEmail(String email);
 
-    List<User> getAllUsers();
+	List<User> getAllUsers();
 
-    boolean updateUser(User user);
+	boolean updateUser(User user);
 
-    boolean deleteUser(int userId);
-    
-    boolean updatePassword(int userId, String hashedPassword);
+	boolean deleteUser(int userId);
+
+	boolean updatePassword(int userId, String hashedPassword);
+
+
+	User getUserByPhone(String phone);
+
 }

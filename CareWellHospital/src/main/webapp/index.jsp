@@ -54,8 +54,12 @@
 					<a class="btn btn-primary"
 						href="<%= request.getContextPath() %>/login.jsp"> Book an
 						Appointment <span>→</span>
-					</a> <a class="btn btn-secondary" href="#services">Explore Our
-						Services</a>
+					</a> 
+					
+					<a class="btn btn-secondary" href="#services">
+    Explore Our Services
+</a>
+
 				</div>
 
 				<div class="hero-note">

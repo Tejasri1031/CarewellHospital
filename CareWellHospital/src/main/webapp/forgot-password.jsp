@@ -12,7 +12,7 @@
 </head>
 <body>
     <div class="auth-page">
-        <div class="auth-form">
+       	<div class="auth-form forgot-password-card">
             <h2>Forgot Password?</h2>
             <p>Enter your registered email address to request a reset link.</p>
 
