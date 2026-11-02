@@ -12,8 +12,11 @@ import java.util.Map;
 
 public class AIChatService {
 
-    private static final String OLLAMA_URL =
-            "http://localhost:11434/api/chat";
+	private static final String OLLAMA_URL =
+	        System.getenv().getOrDefault(
+	            "OLLAMA_URL",
+	            "http://localhost:11434/api/chat"
+	        );
 
     private static final String MODEL =
             "llama3.2:1b";
