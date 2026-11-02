@@ -69,6 +69,15 @@
             <a href="<%= context %>/patient/prescriptions.jsp" class="nav-item">
                 <span class="nav-icon">℞</span><span>Prescriptions</span>
             </a>
+            
+            <!-- AI MEDICINE ASSISTANT -->
+<a href="<%= request.getContextPath() %>/patient/ai-medicine-assistant.jsp"
+   class="nav-item">
+
+    <span class="nav-icon">🤖</span>
+    <span>AI Medicine Assistant</span>
+
+</a>
             <a href="<%= context %>/patient/bills.jsp" class="nav-item">
                 <span class="nav-icon">💸</span><span>Bills &amp; Payments</span>
             </a>

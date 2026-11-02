@@ -1,16 +1,19 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.List"%>
 
-<%@ page import="com.dao.DoctorDAO" %>
+<%@ page import="java.util.Map"%>
 
-<%@ page import="com.daoimpl.DoctorDAOImpl" %>
+<%@ page import="com.dao.DoctorDAO"%>
 
-<%@ page import="com.model.User" %>
+<%@ page import="com.daoimpl.DoctorDAOImpl"%>
 
-<%@ page import="com.model.Doctor" %>
+<%@ page import="com.model.User"%>
 
-<%@ page import="com.model.AppointmentDetails" %>
+<%@ page import="com.model.Doctor"%>
+
+<%@ page import="com.model.AppointmentDetails"%>
 
 
 
@@ -136,356 +139,371 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>My Appointments | CareWell Hospital</title>
+<title>My Appointments | CareWell Hospital</title>
 
-   
-<link rel="stylesheet"
-      href="<%= request.getContextPath() %>/css/doctor-common.css">
 
 <link rel="stylesheet"
-      href="<%= request.getContextPath() %>/css/doctor-dashboard.css">
+	href="<%= request.getContextPath() %>/css/doctor-common.css">
 
 <link rel="stylesheet"
-      href="<%= request.getContextPath() %>/css/doctor-appointments.css">
-   
-   
+	href="<%= request.getContextPath() %>/css/doctor-dashboard.css">
+
+<link rel="stylesheet"
+	href="<%= request.getContextPath() %>/css/doctor-appointments.css">
+
+
 </head>
 
 <body>
 
-<div class="page-container">
+	<div class="page-container">
 
-    <aside class="sidebar">
+		<aside class="sidebar">
 
-        <div class="brand">
+			<div class="brand">
 
-            <div class="brand-icon">♥︎</div>
+				<div class="brand-icon">♥︎</div>
 
-            <div>
+				<div>
 
-                <h2>CareWell</h2>
+					<h2>CareWell</h2>
 
-                <span>HOSPITAL</span>
+					<span>HOSPITAL</span>
 
-            </div>
+				</div>
 
-        </div>
+			</div>
 
 
 
-        <div class="sidebar-section">
+			<div class="sidebar-section">
 
-            <p class="section-title">DOCTOR PORTAL</p>
+				<p class="section-title">DOCTOR PORTAL</p>
 
-            <a class="sidebar-link" href="<%= request.getContextPath() %>/doctor/dashboard.jsp">
+				<a class="sidebar-link"
+					href="<%= request.getContextPath() %>/doctor/dashboard.jsp"> <span
+					class="menu-icon">🏠</span> Dashboard
 
-                <span class="menu-icon">🏠</span> Dashboard
+				</a> <a class="sidebar-link active"
+					href="<%= request.getContextPath() %>/appointments?action=doctor">
 
-            </a>
+					<span class="menu-icon">📅</span> My Appointments
 
-            <a class="sidebar-link active" href="<%= request.getContextPath() %>/appointments?action=doctor">
+				</a>
 
-                <span class="menu-icon">📅</span> My Appointments
+			</div>
 
-            </a>
 
-        </div>
 
+			<div class="sidebar-section">
 
+				<p class="section-title">PATIENT CARE</p>
 
-        <div class="sidebar-section">
+				<a class="sidebar-link"
+					href="<%= request.getContextPath() %>/doctor/medical-records.jsp">
 
-            <p class="section-title">PATIENT CARE</p>
+					<span class="menu-icon">🏥</span> Medical Records
 
-            <a class="sidebar-link" href="<%= request.getContextPath() %>/doctor/medical-records.jsp">
+				</a> <a class="sidebar-link"
+					href="<%= request.getContextPath() %>/doctor/prescriptions.jsp">
 
-                <span class="menu-icon">🏥</span> Medical Records
+					<span class="menu-icon">℞</span> Prescriptions
 
-            </a>
+				</a> <a class="sidebar-link"
+					href="<%= request.getContextPath() %>/doctor/add-prescription.jsp">
 
-            <a class="sidebar-link" href="<%= request.getContextPath() %>/doctor/prescriptions.jsp">
+					<span class="menu-icon">📝</span> Add Prescription
 
-                <span class="menu-icon">℞</span> Prescriptions
+				</a>
 
-            </a>
+			</div>
 
-            <a class="sidebar-link" href="<%= request.getContextPath() %>/doctor/add-prescription.jsp">
 
-                <span class="menu-icon">📝</span> Add Prescription
 
-            </a>
+			<div class="sidebar-section">
 
-        </div>
+				<p class="section-title">ACCOUNT</p>
 
+				<a class="sidebar-link"
+					href="<%= request.getContextPath() %>/doctor/profile.jsp"> <span
+					class="menu-icon">👤</span> My Profile
 
+				</a>
 
-        <div class="sidebar-section">
+			</div>
 
-            <p class="section-title">ACCOUNT</p>
 
-            <a class="sidebar-link" href="<%= request.getContextPath() %>/doctor/profile.jsp">
 
-                <span class="menu-icon">👤</span> My Profile
+			<div class="sidebar-bottom">
 
-            </a>
+				<a class="sidebar-link"
+					href="<%= request.getContextPath() %>/LogoutController"> <span
+					class="menu-icon">🏃🚪</span> Logout
 
-        </div>
+				</a>
 
+			</div>
 
+		</aside>
 
-        <div class="sidebar-bottom">
 
-            <a class="sidebar-link" href="<%= request.getContextPath() %>/LogoutController">
 
-                <span class="menu-icon">🏃🚪</span> Logout
+		<main class="main-content">
 
-            </a>
+			<header class="top-header">
 
-        </div>
+				<div>
 
-    </aside>
+					<h1>My Appointments</h1>
 
+					<p>View and manage your patient appointments</p>
 
+				</div>
 
-    <main class="main-content">
+				<div class="doctor-account-menu">
+					<button type="button" class="user-profile doctor-profile-trigger"
+						id="doctorProfileTrigger" aria-expanded="false"
+						aria-controls="doctorProfileDropdown">
 
-        <header class="top-header">
+						<div class="avatar"><%= firstLetter %></div>
 
-            <div>
+						<div class="user-info">
+							<strong><%= doctorName %></strong> <span><%= doctor.getSpecialization() %></span>
+						</div>
 
-                <h1>My Appointments</h1>
+						<span class="doctor-chevron" aria-hidden="true">⌄</span>
+					</button>
 
-                <p>View and manage your patient appointments</p>
+					<div class="doctor-dropdown" id="doctorProfileDropdown" hidden>
+						<a class="doctor-dropdown-item"
+							href="<%= request.getContextPath() %>/doctor/update-details.jsp">
+							✏️ <span>Update Details</span>
+						</a> <a class="doctor-dropdown-item"
+							href="<%= request.getContextPath() %>/doctor/change-password.jsp">
+							🔒 <span>Change Password</span>
+						</a>
 
-            </div>
+						<div class="doctor-dropdown-divider"></div>
 
-            <div class="doctor-account-menu">
-    <button type="button"
-            class="user-profile doctor-profile-trigger"
-            id="doctorProfileTrigger"
-            aria-expanded="false"
-            aria-controls="doctorProfileDropdown">
+						<a class="doctor-dropdown-item logout-item"
+							href="<%= request.getContextPath() %>/LogoutController"> 🚪 <span>Logout</span>
+						</a>
+					</div>
+				</div>
 
-        <div class="avatar"><%= firstLetter %></div>
+			</header>
 
-        <div class="user-info">
-            <strong><%= doctorName %></strong>
-            <span><%= doctor.getSpecialization() %></span>
-        </div>
 
-        <span class="doctor-chevron" aria-hidden="true">⌄</span>
-    </button>
 
-    <div class="doctor-dropdown" id="doctorProfileDropdown" hidden>
-        <a class="doctor-dropdown-item"
-           href="<%= request.getContextPath() %>/doctor/update-details.jsp">
-            ✏️ <span>Update Details</span>
-        </a>
+			<section class="content-area">
 
-        <a class="doctor-dropdown-item"
-           href="<%= request.getContextPath() %>/doctor/change-password.jsp">
-            🔒 <span>Change Password</span>
-        </a>
+				<div class="page-title">
 
-        <div class="doctor-dropdown-divider"></div>
+					<div>
 
-        <a class="doctor-dropdown-item logout-item"
-           href="<%= request.getContextPath() %>/LogoutController">
-            🚪 <span>Logout</span>
-        </a>
-    </div>
-</div>
+						<h2>Appointments</h2>
 
-        </header>
+						<p>
 
+							<% if (!"ALL".equals(selectedStatus) && !"ALL".equals(selectedDateFilter)) { %>
 
+							Showing
+							<%= selectedStatus.toLowerCase() %>
+							appointments for the selected date range
 
-        <section class="content-area">
+							<% } else if (!"ALL".equals(selectedStatus)) { %>
 
-            <div class="page-title">
+							Showing
+							<%= selectedStatus.toLowerCase() %>
+							appointments
 
-                <div>
+							<% } else if (!"ALL".equals(selectedDateFilter)) { %>
 
-                    <h2>Appointments</h2>
+							Showing appointments for the selected date range
 
-                    <p>
+							<% } else { %>
 
-                        <% if (!"ALL".equals(selectedStatus) && !"ALL".equals(selectedDateFilter)) { %>
+							All appointments assigned to you
 
-                            Showing <%= selectedStatus.toLowerCase() %> appointments for the selected date range
+							<% } %>
 
-                        <% } else if (!"ALL".equals(selectedStatus)) { %>
+						</p>
 
-                            Showing <%= selectedStatus.toLowerCase() %> appointments
+					</div>
 
-                        <% } else if (!"ALL".equals(selectedDateFilter)) { %>
+					<div class="appointment-count">
 
-                            Showing appointments for the selected date range
+						<strong><%= appointments.size() %></strong> <span>Appointments
+							Shown</span>
 
-                        <% } else { %>
+					</div>
 
-                            All appointments assigned to you
+				</div>
 
-                        <% } %>
 
-                    </p>
+				<div class="appointments-card">
 
-                </div>
+					<div class="appointments-heading">
+						<h3>Appointment List</h3>
+					</div>
 
-                <div class="appointment-count">
+					<form class="appointment-filters"
+						action="<%= request.getContextPath() %>/appointments" method="get">
 
-                    <strong><%= appointments.size() %></strong>
+						<input type="hidden" name="action" value="doctor">
 
-                    <span>Appointments Shown</span>
+						<div class="filter-field">
+							<label for="statusFilter">Filter by status</label> <select
+								id="statusFilter" name="status">
+								<option value="ALL"
+									<%= "ALL".equals(selectedStatus) ? "selected" : "" %>>All
+									statuses</option>
+								<option value="PENDING"
+									<%= "PENDING".equals(selectedStatus) ? "selected" : "" %>>Pending</option>
+								<option value="CONFIRMED"
+									<%= "CONFIRMED".equals(selectedStatus) ? "selected" : "" %>>Confirmed</option>
+								<option value="COMPLETED"
+									<%= "COMPLETED".equals(selectedStatus) ? "selected" : "" %>>Completed</option>
+								<option value="CANCELLED"
+									<%= "CANCELLED".equals(selectedStatus) ? "selected" : "" %>>Cancelled</option>
+							</select>
+						</div>
 
-                </div>
+						<div class="filter-field">
+							<label for="dateFilter">Filter by date</label> <select
+								id="dateFilter" name="dateFilter">
+								<option value="ALL"
+									<%= "ALL".equals(selectedDateFilter) ? "selected" : "" %>>All
+									dates</option>
+								<option value="TODAY"
+									<%= "TODAY".equals(selectedDateFilter) ? "selected" : "" %>>Today</option>
+								<option value="UPCOMING"
+									<%= "UPCOMING".equals(selectedDateFilter) ? "selected" : "" %>>Upcoming</option>
+								<option value="PAST"
+									<%= "PAST".equals(selectedDateFilter) ? "selected" : "" %>>Past</option>
+								<option value="CUSTOM"
+									<%= "CUSTOM".equals(selectedDateFilter) ? "selected" : "" %>>Custom
+									date</option>
+							</select>
+						</div>
 
-            </div>
+						<div class="filter-field custom-date-field" id="customDateField"
+							style="<%= "CUSTOM".equals(selectedDateFilter) ? "display:flex;" : "display:none;" %>">
 
+							<label for="appointmentDate">Choose date</label> <input
+								type="date" id="appointmentDate" name="appointmentDate"
+								value="<%= selectedAppointmentDate %>"
+								<%= "CUSTOM".equals(selectedDateFilter) ? "required" : "" %>>
+						</div>
 
-<div class="appointments-card">
+						<button type="submit" class="filter-submit">Apply Filters
+						</button>
+					</form>
 
-    <div class="appointments-heading">
-        <h3>Appointment List</h3>
-    </div>
+					<p class="filter-note">Combine a status and date filter to
+						narrow your appointments.</p>
 
-    <form class="appointment-filters"
-          action="<%= request.getContextPath() %>/appointments"
-          method="get">
+					<div class="table-container">
+						<table>
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Patient</th>
+									<th>Department</th>
+									<th>Date</th>
+									<th>Time</th>
+									<th>Reason</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
 
-        <input type="hidden" name="action" value="doctor">
-
-        <div class="filter-field">
-            <label for="statusFilter">Filter by status</label>
-            <select id="statusFilter" name="status">
-                <option value="ALL" <%= "ALL".equals(selectedStatus) ? "selected" : "" %>>All statuses</option>
-                <option value="PENDING" <%= "PENDING".equals(selectedStatus) ? "selected" : "" %>>Pending</option>
-                <option value="CONFIRMED" <%= "CONFIRMED".equals(selectedStatus) ? "selected" : "" %>>Confirmed</option>
-                <option value="COMPLETED" <%= "COMPLETED".equals(selectedStatus) ? "selected" : "" %>>Completed</option>
-                <option value="CANCELLED" <%= "CANCELLED".equals(selectedStatus) ? "selected" : "" %>>Cancelled</option>
-            </select>
-        </div>
-
-        <div class="filter-field">
-            <label for="dateFilter">Filter by date</label>
-            <select id="dateFilter" name="dateFilter">
-                <option value="ALL" <%= "ALL".equals(selectedDateFilter) ? "selected" : "" %>>All dates</option>
-                <option value="TODAY" <%= "TODAY".equals(selectedDateFilter) ? "selected" : "" %>>Today</option>
-                <option value="UPCOMING" <%= "UPCOMING".equals(selectedDateFilter) ? "selected" : "" %>>Upcoming</option>
-                <option value="PAST" <%= "PAST".equals(selectedDateFilter) ? "selected" : "" %>>Past</option>
-                <option value="CUSTOM" <%= "CUSTOM".equals(selectedDateFilter) ? "selected" : "" %>>Custom date</option>
-            </select>
-        </div>
-
-        <div class="filter-field custom-date-field"
-             id="customDateField"
-             style="<%= "CUSTOM".equals(selectedDateFilter) ? "display:flex;" : "display:none;" %>">
-
-            <label for="appointmentDate">Choose date</label>
-            <input type="date"
-                   id="appointmentDate"
-                   name="appointmentDate"
-                   value="<%= selectedAppointmentDate %>"
-                   <%= "CUSTOM".equals(selectedDateFilter) ? "required" : "" %>>
-        </div>
-
-        <button type="submit" class="filter-submit">
-            Apply Filters
-        </button>
-    </form>
-
-    <p class="filter-note">
-        Combine a status and date filter to narrow your appointments.
-    </p>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Patient</th>
-                    <th>Department</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <% if (!appointments.isEmpty()) {
+							<tbody>
+								<% if (!appointments.isEmpty()) {
                     for (AppointmentDetails appointment : appointments) {
                         String appointmentStatus = appointment.getStatus();
                         String statusClass = appointmentStatus == null
                                 ? ""
                                 : appointmentStatus.toLowerCase();
                 %>
-                <tr>
-                    <td>#<%= appointment.getAppointmentId() %></td>
-                    <td><strong><%= appointment.getPatientName() == null ? "" : appointment.getPatientName() %></strong></td>
-                    <td><%= appointment.getDepartmentName() == null ? "" : appointment.getDepartmentName() %></td>
-                    <td><%= appointment.getAppointmentDate() == null ? "" : appointment.getAppointmentDate() %></td>
-                    <td><%= appointment.getAppointmentTime() == null ? "" : appointment.getAppointmentTime() %></td>
-                    <td><%= appointment.getReason() == null ? "" : appointment.getReason() %></td>
-                    <td>
-                        <span class="status <%= statusClass %>">
-                            <%= appointmentStatus == null ? "UNKNOWN" : appointmentStatus %>
-                        </span>
-                    </td>
-                    <td>
-                        <% if ("PENDING".equalsIgnoreCase(appointmentStatus)) { %>
-                            <div class="appointment-actions">
-                                <form method="post" action="<%= request.getContextPath() %>/appointments">
-                                    <input type="hidden" name="action" value="confirm">
-                                    <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
-                                    <button type="submit" class="action-btn confirm-btn">✓ Confirm</button>
-                                </form>
+								<tr>
+									<td>#<%= appointment.getAppointmentId() %></td>
+									<td><strong><%= appointment.getPatientName() == null ? "" : appointment.getPatientName() %></strong></td>
+									<td><%= appointment.getDepartmentName() == null ? "" : appointment.getDepartmentName() %></td>
+									<td><%= appointment.getAppointmentDate() == null ? "" : appointment.getAppointmentDate() %></td>
+									<td><%= appointment.getAppointmentTime() == null ? "" : appointment.getAppointmentTime() %></td>
+									<td><%= appointment.getReason() == null ? "" : appointment.getReason() %></td>
+									<td><span class="status <%= statusClass %>"> <%= appointmentStatus == null ? "UNKNOWN" : appointmentStatus %>
+									</span></td>
+									<td>
+										<% if ("PENDING".equalsIgnoreCase(appointmentStatus)) { %>
+										<div class="appointment-actions">
+											<form method="post"
+												action="<%= request.getContextPath() %>/appointments">
+												<input type="hidden" name="action" value="confirm">
+												<input type="hidden" name="appointmentId"
+													value="<%= appointment.getAppointmentId() %>">
+												<button type="submit" class="action-btn confirm-btn">✓
+													Confirm</button>
+											</form>
 
-                                <form method="post" action="<%= request.getContextPath() %>/appointments">
-                                    <input type="hidden" name="action" value="cancel">
-                                    <input type="hidden" name="appointmentId" value="<%= appointment.getAppointmentId() %>">
-                                    <button type="submit" class="action-btn cancel-btn">✕ Cancel</button>
-                                </form>
-                            </div>
-                        <% } else if ("CONFIRMED".equalsIgnoreCase(appointmentStatus)) { %>
-                            <span class="action-completed">✓ Confirmed</span>
-                        <% } else if ("CANCELLED".equalsIgnoreCase(appointmentStatus)) { %>
-                            <span class="action-cancelled">✕ Cancelled</span>
-                        <% } else if ("COMPLETED".equalsIgnoreCase(appointmentStatus)) { %>
-                            <span class="action-completed">✓ Completed</span>
-                        <% } %>
-                    </td>
-                </tr>
-                <% }
+											<form method="post"
+												action="<%= request.getContextPath() %>/appointments">
+												<input type="hidden" name="action" value="cancel"> <input
+													type="hidden" name="appointmentId"
+													value="<%= appointment.getAppointmentId() %>">
+												<button type="submit" class="action-btn cancel-btn">✕
+													Cancel</button>
+											</form>
+										</div> <% } else if ("CONFIRMED".equalsIgnoreCase(appointmentStatus)) { %>
+										<span class="action-completed">✓ Confirmed</span> <% } else if ("CANCELLED".equalsIgnoreCase(appointmentStatus)) { %>
+										<span class="action-cancelled">✕ Cancelled</span> <% } else if ("COMPLETED".equalsIgnoreCase(appointmentStatus)) { %>
+										<span class="action-completed">✓ Completed</span> <% } %> 
+										<% Map<Integer, Boolean> documentAvailability =
+										        (Map<Integer, Boolean>) request.getAttribute("documentAvailability");
+
+										Boolean hasDocuments = documentAvailability != null
+										        ? documentAvailability.get(appointment.getAppointmentId())
+										        : Boolean.FALSE;
+
+										if (Boolean.TRUE.equals(hasDocuments)) {
+										%>
+ 									<a href="<%= request.getContextPath() %>/doctor/medical-documents?appointmentId=<%= appointment.getAppointmentId() %>"
+										class="action-btn view-documents-btn"> 📄 View Documents </a>
+										<% } %>
+										
+
+									</td>
+								</tr>
+								<% }
                 } else { %>
-                <tr>
-                    <td colspan="8" class="no-data">
-                        No appointments found for the selected filters.
-                    </td>
-                </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
+								<tr>
+									<td colspan="8" class="no-data">No appointments found for
+										the selected filters.</td>
+								</tr>
+								<% } %>
+							</tbody>
+						</table>
+					</div>
 
-</div>
+				</div>
 
-        </section>
+			</section>
 
-        <footer>© 2026 CareWell Hospital. Professional care, better health.</footer>
+			<footer>© 2026 CareWell Hospital. Professional care, better
+				health.</footer>
 
-    </main>
+		</main>
 
-</div>
+	</div>
 
 
 
-<script>
+	<script>
 document.addEventListener("DOMContentLoaded", function () {
 
     /* Custom date filter */

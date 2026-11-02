@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.sql.SQLException;
 import com.dao.BillDAO;
 import com.model.Bill;
 import com.util.DBConnection;
@@ -265,4 +265,6 @@ public class BillDAOImpl implements BillDAO {
 
         return bill;
     }
+    
+   
 }

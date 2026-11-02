@@ -11,8 +11,15 @@ public interface DepartmentDAO {
     Department getDepartmentById(int departmentId);
 
     List<Department> getAllDepartments();
+    
+    List<Department> getActiveDepartments();
+    
+    List<Department> getAllDepartmentsIncludingInactive();
 
     boolean updateDepartment(Department department);
 
     boolean deleteDepartment(int departmentId);
+    
+    boolean isDepartmentNameExists(
+            String departmentName, int excludeDepartmentId);
 }

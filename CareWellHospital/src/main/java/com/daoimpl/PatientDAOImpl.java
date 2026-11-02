@@ -192,4 +192,76 @@ public class PatientDAOImpl implements PatientDAO {
 
         return patient;
     }
+    @Override
+    public List<Patient> getAllPatientsForAdmin() {
+
+        String sql = "SELECT p.*, "
+                + "u.full_name, u.email, u.phone, "
+                + "u.status AS user_status "
+                + "FROM patients p "
+                + "INNER JOIN users u ON p.user_id = u.user_id "
+                + "WHERE u.role = 'PATIENT' "
+                + "ORDER BY p.patient_id DESC";
+
+        List<Patient> patients = new ArrayList<>();
+
+        try (Connection connection = DBConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql);
+                ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+
+                Patient patient = mapPatient(resultSet);
+
+                patient.setFullName(resultSet.getString("full_name"));
+                patient.setEmail(resultSet.getString("email"));
+                patient.setPhone(resultSet.getString("phone"));
+                patient.setUserStatus(resultSet.getString("user_status"));
+
+                patients.add(patient);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return patients;
+    }
+    
+    @Override
+    public Patient getPatientDetailsForAdmin(int patientId) {
+
+        String sql = "SELECT p.*, "
+                + "u.full_name, u.email, u.phone, "
+                + "u.status AS user_status "
+                + "FROM patients p "
+                + "INNER JOIN users u ON p.user_id = u.user_id "
+                + "WHERE p.patient_id = ? AND u.role = 'PATIENT'";
+
+        try (Connection connection = DBConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, patientId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+
+                    Patient patient = mapPatient(resultSet);
+
+                    patient.setFullName(resultSet.getString("full_name"));
+                    patient.setEmail(resultSet.getString("email"));
+                    patient.setPhone(resultSet.getString("phone"));
+                    patient.setUserStatus(resultSet.getString("user_status"));
+
+                    return patient;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

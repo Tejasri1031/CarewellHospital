@@ -17,4 +17,8 @@ public interface PatientDAO {
     boolean updatePatient(Patient patient);
 
     boolean deletePatient(int patientId);
+    
+    List<Patient> getAllPatientsForAdmin();
+    
+    Patient getPatientDetailsForAdmin(int patientId);
 }

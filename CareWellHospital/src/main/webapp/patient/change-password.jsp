@@ -50,6 +50,14 @@
             <div class="nav-section-title">MY HEALTH</div>
             <a href="<%= context %>/patient/medical-records.jsp" class="nav-item"><span class="nav-icon">🏥</span><span>Medical Records</span></a>
             <a href="<%= context %>/patient/prescriptions.jsp" class="nav-item"><span class="nav-icon">℞</span><span>Prescriptions</span></a>
+            <!-- AI MEDICINE ASSISTANT -->
+<a href="<%= request.getContextPath() %>/patient/ai-medicine-assistant.jsp"
+   class="nav-item">
+
+    <span class="nav-icon">🤖</span>
+    <span>AI Medicine Assistant</span>
+
+</a>
             <a href="<%= context %>/patient/bills.jsp" class="nav-item"><span class="nav-icon">💸</span><span>Bills &amp; Payments</span></a>
             <div class="nav-section-title">ACCOUNT</div>
             <a href="<%= context %>/patient/profile.jsp" class="nav-item"><span class="nav-icon">👤</span><span>My Profile</span></a>

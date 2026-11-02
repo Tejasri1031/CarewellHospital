@@ -36,6 +36,12 @@ public interface AppointmentDAO {
             Time appointmentTime);
 
     boolean updateAppointment(Appointment appointment);
+    
+    boolean updateAppointmentStatus(int appointmentId, String status);
 
     boolean deleteAppointment(int appointmentId);
+    
+    List<Appointment> getAllAppointmentsForAdmin();
+    
+    Appointment getAppointmentDetailsForAdmin(int appointmentId);
 }

@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 
+import java.io.InputStream;
+
 
 
 import jakarta.servlet.ServletException;
@@ -31,6 +33,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.servlet.http.HttpSession;
 
+import jakarta.servlet.annotation.MultipartConfig;
 
 
 import com.dao.AppointmentDAO;
@@ -46,7 +49,14 @@ import com.dao.PatientDAO;
 import com.dao.UserDAO;
 
 
+import com.dao.DepartmentDAO;
+import com.daoimpl.DepartmentDAOImpl;
+import com.model.Department;
+import com.service.SymptomRecommendationService;
 
+
+import com.dao.MedicalDocumentDAO;
+import com.daoimpl.MedicalDocumentDAOImpl;
 import com.daoimpl.AppointmentDAOImpl;
 
 import com.daoimpl.AppointmentDetailsDAOImpl;
@@ -77,772 +87,889 @@ import com.model.User;
 
 import com.util.EmailService;
 
+import jakarta.servlet.http.Part;
 
+import com.model.MedicalDocument;
+import com.util.FileStorageUtil;
+
+import java.util.Locale;
 
 @WebServlet("/appointments")
-
+@MultipartConfig(
+		fileSizeThreshold = 1024 * 1024,
+		maxFileSize = 5 * 1024 * 1024,
+		maxRequestSize = 26 * 1024 * 1024
+		)
 public class AppointmentController extends HttpServlet {
 
 
+	private static final long serialVersionUID = 1L;
 
-    private static final long serialVersionUID = 1L;
 
 
+	private AppointmentDAO appointmentDAO;
 
-    private AppointmentDAO appointmentDAO;
+	private AppointmentDetailsDAO appointmentDetailsDAO;
 
-    private AppointmentDetailsDAO appointmentDetailsDAO;
+	private DoctorDAO doctorDAO;
 
-    private DoctorDAO doctorDAO;
+	private PatientDAO patientDAO;
 
-    private PatientDAO patientDAO;
+	private NotificationDAO notificationDAO;
 
-    private NotificationDAO notificationDAO;
+	private UserDAO userDAO;
 
-    private UserDAO userDAO;
+	private DepartmentDAO departmentDAO;
+	private SymptomRecommendationService symptomRecommendationService;
 
+	private MedicalDocumentDAO medicalDocumentDAO;
 
+	@Override
 
-    @Override
+	public void init() throws ServletException {
 
-    public void init() throws ServletException {
+		appointmentDAO = new AppointmentDAOImpl();
 
-        appointmentDAO = new AppointmentDAOImpl();
+		appointmentDetailsDAO = new AppointmentDetailsDAOImpl();
 
-        appointmentDetailsDAO = new AppointmentDetailsDAOImpl();
+		doctorDAO = new DoctorDAOImpl();
 
-        doctorDAO = new DoctorDAOImpl();
+		patientDAO = new PatientDAOImpl();
 
-        patientDAO = new PatientDAOImpl();
+		notificationDAO = new NotificationDAOImpl();
 
-        notificationDAO = new NotificationDAOImpl();
+		userDAO = new UserDAOImpl();
 
-        userDAO = new UserDAOImpl();
+		departmentDAO = new DepartmentDAOImpl();
 
-    }
+		medicalDocumentDAO = new MedicalDocumentDAOImpl();
 
+		symptomRecommendationService = new SymptomRecommendationService();
 
+	}
 
-    // =========================================================
 
-    // GET
 
-    // =========================================================
+	// =========================================================
 
+	// GET
 
+	// =========================================================
 
-    @Override
 
-    protected void doGet(HttpServletRequest request,
 
-                         HttpServletResponse response)
+	@Override
 
-            throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request,
 
+			HttpServletResponse response)
 
+					throws ServletException, IOException {
 
-        String action = request.getParameter("action");
 
 
+		String action = request.getParameter("action");
+		System.out.println("APPOINTMENT POST CALLED - ACTION: " + action);
 
-        try {
 
-            // ADMIN - ALL APPOINTMENTS
 
-            if (action == null || action.equals("list")) {
+		try {
 
+			// ADMIN - ALL APPOINTMENTS
 
+			if (action == null || action.equals("list")) {
 
-                List<Appointment> appointments =
 
-                        appointmentDAO.getAllAppointments();
 
+				List<Appointment> appointments =
 
+						appointmentDAO.getAllAppointments();
 
-                request.setAttribute("appointments", appointments);
 
 
+				request.setAttribute("appointments", appointments);
 
-                request.getRequestDispatcher(
 
-                        "/admin/appointments.jsp").forward(request, response);
 
-            }
+				request.getRequestDispatcher(
 
+						"/admin/appointments.jsp").forward(request, response);
 
+			}
 
-            // PATIENT - APPOINTMENTS
 
-            else if (action.equals("patient")) {
 
+			// PATIENT - APPOINTMENTS
 
+			else if (action.equals("patient")) {
 
-                int patientId = Integer.parseInt(
 
-                        request.getParameter("patientId"));
 
+				int patientId = Integer.parseInt(
 
+						request.getParameter("patientId"));
 
-                List<Appointment> appointments =
 
-                        appointmentDAO.getAppointmentsByPatient(patientId);
 
+				List<Appointment> appointments =
 
+						appointmentDAO.getAppointmentsByPatient(patientId);
 
-                request.setAttribute("appointments", appointments);
 
 
+				request.setAttribute("appointments", appointments);
 
-                request.getRequestDispatcher(
 
-                        "/patient/appointments.jsp").forward(request, response);
 
-            }
+				request.getRequestDispatcher(
 
+						"/patient/appointments.jsp").forward(request, response);
 
+			}
 
-            // DOCTOR - APPOINTMENTS
 
-            else if (action.equals("doctor")) {
 
+			// DOCTOR - APPOINTMENTS
 
+			else if (action.equals("doctor")) {
 
-                HttpSession session = request.getSession(false);
 
 
+				HttpSession session = request.getSession(false);
 
-                if (session == null) {
 
-                    response.sendRedirect(
 
-                            request.getContextPath() + "/login.jsp");
+				if (session == null) {
 
-                    return;
+					response.sendRedirect(
 
-                }
+							request.getContextPath() + "/login.jsp");
 
+					return;
 
+				}
 
-                User loggedUser = (User) session.getAttribute("user");
 
 
+				User loggedUser = (User) session.getAttribute("user");
 
-                if (loggedUser == null
 
-                        || !"DOCTOR".equalsIgnoreCase(loggedUser.getRole())) {
 
-                    response.sendRedirect(
+				if (loggedUser == null
 
-                            request.getContextPath() + "/login.jsp");
+						|| !"DOCTOR".equalsIgnoreCase(loggedUser.getRole())) {
 
-                    return;
+					response.sendRedirect(
 
-                }
+							request.getContextPath() + "/login.jsp");
 
+					return;
 
+				}
 
-                Doctor loggedDoctor = findLoggedDoctor(loggedUser);
 
 
+				Doctor loggedDoctor = findLoggedDoctor(loggedUser);
 
-                if (loggedDoctor == null) {
 
-                    response.sendRedirect(
 
-                            request.getContextPath()
+				if (loggedDoctor == null) {
 
-                                    + "/login.jsp?error=doctorNotFound");
+					response.sendRedirect(
 
-                    return;
+							request.getContextPath()
 
-                }
+							+ "/login.jsp?error=doctorNotFound");
 
+					return;
 
+				}
 
-                int doctorId = loggedDoctor.getDoctorId();
 
 
+				int doctorId = loggedDoctor.getDoctorId();
 
-                String filter = request.getParameter("filter");
 
-                String status = request.getParameter("status");
 
-                String dateFilter = request.getParameter("dateFilter");
+				String filter = request.getParameter("filter");
 
-                String customDateText =
+				String status = request.getParameter("status");
 
-                        request.getParameter("appointmentDate");
+				String dateFilter = request.getParameter("dateFilter");
 
+				String customDateText =
 
+						request.getParameter("appointmentDate");
 
-                // Normalize status
 
-                if (status == null || status.trim().isEmpty()) {
 
-                    status = "ALL";
+				// Normalize status
 
-                } else {
+				if (status == null || status.trim().isEmpty()) {
 
-                    status = status.trim().toUpperCase();
+					status = "ALL";
 
-                }
+				} else {
 
+					status = status.trim().toUpperCase();
 
+				}
 
-                if (!status.equals("ALL")
 
-                        && !status.equals("PENDING")
 
-                        && !status.equals("CONFIRMED")
+				if (!status.equals("ALL")
 
-                        && !status.equals("CANCELLED")
+						&& !status.equals("PENDING")
 
-                        && !status.equals("COMPLETED")) {
+						&& !status.equals("CONFIRMED")
 
-                    status = "ALL";
+						&& !status.equals("CANCELLED")
 
-                }
+						&& !status.equals("COMPLETED")) {
 
+					status = "ALL";
 
+				}
 
-                // Normalize date filter
 
-                if (dateFilter == null || dateFilter.trim().isEmpty()) {
 
-                    dateFilter = "today".equalsIgnoreCase(filter)
+				// Normalize date filter
 
-                            ? "TODAY" : "ALL";
+				if (dateFilter == null || dateFilter.trim().isEmpty()) {
 
-                } else {
+					dateFilter = "today".equalsIgnoreCase(filter)
 
-                    dateFilter = dateFilter.trim().toUpperCase();
+							? "TODAY" : "ALL";
 
-                }
+				} else {
 
+					dateFilter = dateFilter.trim().toUpperCase();
 
+				}
 
-                if (!dateFilter.equals("ALL")
 
-                        && !dateFilter.equals("TODAY")
 
-                        && !dateFilter.equals("UPCOMING")
+				if (!dateFilter.equals("ALL")
 
-                        && !dateFilter.equals("PAST")
+						&& !dateFilter.equals("TODAY")
 
-                        && !dateFilter.equals("CUSTOM")) {
+						&& !dateFilter.equals("UPCOMING")
 
-                    dateFilter = "ALL";
+						&& !dateFilter.equals("PAST")
 
-                }
+						&& !dateFilter.equals("CUSTOM")) {
 
+					dateFilter = "ALL";
 
+				}
 
-                LocalDate today = LocalDate.now();
 
-                LocalDate selectedDate = null;
 
+				LocalDate today = LocalDate.now();
 
+				LocalDate selectedDate = null;
 
-                // Validate custom date safely
 
-                if ("CUSTOM".equals(dateFilter)) {
 
-                    try {
+				// Validate custom date safely
 
-                        if (customDateText != null
+				if ("CUSTOM".equals(dateFilter)) {
 
-                                && !customDateText.trim().isEmpty()) {
+					try {
 
-                            selectedDate =
+						if (customDateText != null
 
-                                    LocalDate.parse(customDateText.trim());
+								&& !customDateText.trim().isEmpty()) {
 
-                        } else {
+							selectedDate =
 
-                            dateFilter = "ALL";
+									LocalDate.parse(customDateText.trim());
 
-                        }
+						} else {
 
-                    } catch (java.time.format.DateTimeParseException ex) {
+							dateFilter = "ALL";
 
-                        dateFilter = "ALL";
+						}
 
-                        customDateText = "";
+					} catch (java.time.format.DateTimeParseException ex) {
 
-                    }
+						dateFilter = "ALL";
 
-                }
+						customDateText = "";
 
+					}
 
+				}
 
-                // Load appointments for this doctor only
 
-                List<AppointmentDetails> allDoctorAppointments =
 
-                        appointmentDetailsDAO
+				// Load appointments for this doctor only
 
-                                .getAppointmentDetailsByDoctor(doctorId);
+				List<AppointmentDetails> allDoctorAppointments =
 
+						appointmentDetailsDAO
 
+						.getAppointmentDetailsByDoctor(doctorId);
 
-                List<AppointmentDetails> appointments = new ArrayList<>();
 
 
+				List<AppointmentDetails> appointments = new ArrayList<>();
 
-                for (AppointmentDetails appointment : allDoctorAppointments) {
 
 
+				for (AppointmentDetails appointment : allDoctorAppointments) {
 
-                    if (appointment == null
 
-                            || appointment.getAppointmentDate() == null) {
 
-                        continue;
+					if (appointment == null
 
-                    }
+							|| appointment.getAppointmentDate() == null) {
 
+						continue;
 
+					}
 
-                    LocalDate appointmentDay =
 
-                            appointment.getAppointmentDate().toLocalDate();
 
+					LocalDate appointmentDay =
 
+							appointment.getAppointmentDate().toLocalDate();
 
-                    String appointmentStatus =
 
-                            appointment.getStatus() == null
 
-                                    ? ""
+					String appointmentStatus =
 
-                                    : appointment.getStatus().trim().toUpperCase();
+							appointment.getStatus() == null
 
+							? ""
 
+									: appointment.getStatus().trim().toUpperCase();
 
-                    boolean statusMatches =
 
-                            "ALL".equals(status)
 
-                                    || status.equals(appointmentStatus);
+					boolean statusMatches =
 
+							"ALL".equals(status)
 
+							|| status.equals(appointmentStatus);
 
-                    boolean dateMatches;
 
 
+					boolean dateMatches;
 
-                    switch (dateFilter) {
 
-                        case "TODAY":
 
-                            dateMatches = appointmentDay.equals(today);
+					switch (dateFilter) {
 
-                            break;
+					case "TODAY":
 
+						dateMatches = appointmentDay.equals(today);
 
+						break;
 
-                        case "UPCOMING":
 
-                            dateMatches = appointmentDay.isAfter(today);
 
-                            break;
+					case "UPCOMING":
 
+						dateMatches = appointmentDay.isAfter(today);
 
+						break;
 
-                        case "PAST":
 
-                            dateMatches = appointmentDay.isBefore(today);
 
-                            break;
+					case "PAST":
 
+						dateMatches = appointmentDay.isBefore(today);
 
+						break;
 
-                        case "CUSTOM":
 
-                            dateMatches = selectedDate != null
 
-                                    && appointmentDay.equals(selectedDate);
+					case "CUSTOM":
 
-                            break;
+						dateMatches = selectedDate != null
 
+						&& appointmentDay.equals(selectedDate);
 
+						break;
 
-                        default:
 
-                            dateMatches = true;
 
-                            break;
+					default:
 
-                    }
+						dateMatches = true;
 
+						break;
 
+					}
 
-                    if (statusMatches && dateMatches) {
 
-                        appointments.add(appointment);
 
-                    }
+					if (statusMatches && dateMatches) {
 
-                }
+						appointments.add(appointment);
 
+					}
 
+				}
 
-                // Send filtered results and selected values to JSP
+				// Check which appointments have uploaded medical documents
+				java.util.Map<Integer, Boolean> documentAvailability =
+						new java.util.HashMap<>();
 
-                request.setAttribute("appointments", appointments);
+				for (AppointmentDetails appointment : appointments) {
 
-                request.setAttribute("selectedFilter", filter);
+					List<MedicalDocument> documents =
+							medicalDocumentDAO.getDocumentsByAppointment(
+									appointment.getAppointmentId());
 
-                request.setAttribute("selectedStatus", status);
+					documentAvailability.put(
+							appointment.getAppointmentId(),
+							documents != null && !documents.isEmpty()
+							);
+				}
 
-                request.setAttribute("selectedDateFilter", dateFilter);
+				request.setAttribute("documentAvailability", documentAvailability);
 
-                request.setAttribute(
 
-                        "selectedAppointmentDate", customDateText);
+				// Send filtered results and selected values to JSP
 
+				request.setAttribute("appointments", appointments);
 
+				request.setAttribute("selectedFilter", filter);
 
-                request.getRequestDispatcher("/doctor/appointments.jsp")
+				request.setAttribute("selectedStatus", status);
 
-                        .forward(request, response);
+				request.setAttribute("selectedDateFilter", dateFilter);
 
-            }
+				request.setAttribute(
 
+						"selectedAppointmentDate", customDateText);
 
 
-            // ADMIN - APPOINTMENTS BY DATE
 
-            else if (action.equals("date")) {
+				request.getRequestDispatcher("/doctor/appointments.jsp")
 
+				.forward(request, response);
 
+			}
 
-                Date appointmentDate = Date.valueOf(
 
-                        request.getParameter("appointmentDate"));
 
+			// ADMIN - APPOINTMENTS BY DATE
 
+			else if (action.equals("date")) {
 
-                List<Appointment> appointments =
 
-                        appointmentDAO.getAppointmentsByDate(appointmentDate);
 
+				Date appointmentDate = Date.valueOf(
 
+						request.getParameter("appointmentDate"));
 
-                request.setAttribute("appointments", appointments);
 
 
+				List<Appointment> appointments =
 
-                request.getRequestDispatcher(
+						appointmentDAO.getAppointmentsByDate(appointmentDate);
 
-                        "/admin/appointments.jsp").forward(request, response);
 
-            }
 
+				request.setAttribute("appointments", appointments);
 
 
-            // ADMIN - DELETE
 
-            else if (action.equals("delete")) {
+				request.getRequestDispatcher(
 
+						"/admin/appointments.jsp").forward(request, response);
 
+			}
 
-                int appointmentId = Integer.parseInt(
 
-                        request.getParameter("appointmentId"));
 
+			// ADMIN - DELETE
 
+			else if (action.equals("delete")) {
 
-                appointmentDAO.deleteAppointment(appointmentId);
 
 
+				int appointmentId = Integer.parseInt(
 
-                response.sendRedirect(
+						request.getParameter("appointmentId"));
 
-                        request.getContextPath()
 
-                                + "/appointments?action=list");
 
-            }
+				appointmentDAO.deleteAppointment(appointmentId);
 
 
 
-        } catch (Exception e) {
+				response.sendRedirect(
 
-            e.printStackTrace();
+						request.getContextPath()
 
+						+ "/appointments?action=list");
 
+			}
 
-            response.sendRedirect(
 
-                    request.getContextPath()
 
-                            + "/appointments?action=list&error=invalidData");
+		} catch (Exception e) {
 
-        }
+			e.printStackTrace();
 
-    }
 
 
+			response.sendRedirect(
 
-    // =========================================================
+					request.getContextPath()
 
-    // POST
+					+ "/appointments?action=list&error=invalidData");
 
-    // =========================================================
+		}
 
+	}
 
 
-    @Override
 
-    protected void doPost(HttpServletRequest request,
+	// =========================================================
 
-                          HttpServletResponse response)
+	// POST
 
-            throws ServletException, IOException {
+	// =========================================================
 
 
 
-        String action = request.getParameter("action");
+	@Override
 
+	protected void doPost(HttpServletRequest request,
 
+			HttpServletResponse response)
 
-        try {
+					throws ServletException, IOException {
 
-            // PATIENT - BOOK APPOINTMENT
 
-            if ("add".equals(action)) {
 
+		String action = request.getParameter("action");
 
+		System.out.println("APPOINTMENT POST CALLED - ACTION: " + action);
 
-                HttpSession session = request.getSession(false);
 
 
+		try {
 
-                if (session == null) {
+			// PATIENT - BOOK APPOINTMENT
 
-                    response.sendRedirect(
+			if ("add".equals(action)) {
 
-                            request.getContextPath() + "/login.jsp");
 
-                    return;
 
-                }
+				HttpSession session = request.getSession(false);
 
 
 
-                User loggedUser =
+				if (session == null) {
 
-                        (User) session.getAttribute("user");
+					response.sendRedirect(
 
+							request.getContextPath() + "/login.jsp");
 
+					return;
 
-                if (loggedUser == null
+				}
 
-                        || !"PATIENT".equalsIgnoreCase(loggedUser.getRole())) {
 
-                    response.sendRedirect(
 
-                            request.getContextPath() + "/login.jsp");
+				User loggedUser =
 
-                    return;
+						(User) session.getAttribute("user");
 
-                }
 
 
+				if (loggedUser == null
 
-                Patient loggedPatient =
+						|| !"PATIENT".equalsIgnoreCase(loggedUser.getRole())) {
 
-                        patientDAO.getPatientByUserId(loggedUser.getUserId());
+					response.sendRedirect(
 
+							request.getContextPath() + "/login.jsp");
 
+					return;
 
-                if (loggedPatient == null) {
+				}
 
-                    response.sendRedirect(
 
-                            request.getContextPath()
 
-                                    + "/patient/book-appointment.jsp"
+				Patient loggedPatient =
+
+						patientDAO.getPatientByUserId(loggedUser.getUserId());
+
+
+
+				if (loggedPatient == null) {
+
+					response.sendRedirect(
+
+							request.getContextPath()
+
+							+ "/patient/book-appointment.jsp"
 
                                     + "?error=patientNotFound");
 
-                    return;
+					return;
 
-                }
+				}
 
+				// Server-side emergency symptom validation.
+				String symptoms = request.getParameter("symptoms");
 
+				if (symptoms == null || symptoms.trim().isEmpty()) {
+					response.sendRedirect(
+							request.getContextPath()
+							+ "/patient/book-appointment.jsp?error=symptomsRequired");
+					return;
+				}
 
-                Appointment appointment = new Appointment();
+				List<Department> departments =
+						departmentDAO.getAllDepartments();
 
+				SymptomRecommendationService.Recommendation recommendation =
+						symptomRecommendationService.recommendDepartment(
+								symptoms, departments);
 
+				if (recommendation.isEmergency()) {
+					response.sendRedirect(
+							request.getContextPath()
+							+ "/patient/book-appointment.jsp?error=emergency");
+					return;
+				}
 
-                // Use the patient linked to the logged-in account.
-
-                appointment.setPatientId(loggedPatient.getPatientId());
-
-
-
-                appointment.setDoctorId(Integer.parseInt(
-
-                        request.getParameter("doctorId")));
-
-
-
-                appointment.setDepartmentId(Integer.parseInt(
-
-                        request.getParameter("departmentId")));
-
-
-
-                appointment.setAppointmentDate(Date.valueOf(
-
-                        request.getParameter("appointmentDate")));
+				Appointment appointment = new Appointment();
 
 
 
-                String appointmentTime =
+				// Use the patient linked to the logged-in account.
 
-                        request.getParameter("appointmentTime");
-
-
-
-                if (appointmentTime != null
-
-                        && appointmentTime.length() == 5) {
-
-                    appointmentTime += ":00";
-
-                }
+				appointment.setPatientId(loggedPatient.getPatientId());
 
 
 
-                appointment.setAppointmentTime(Time.valueOf(appointmentTime));
+				appointment.setDoctorId(Integer.parseInt(
 
-                appointment.setReason(request.getParameter("reason"));
-
-                appointment.setStatus("PENDING");
-
-                appointment.setNotes(request.getParameter("notes"));
+						request.getParameter("doctorId")));
 
 
 
+				appointment.setDepartmentId(Integer.parseInt(
 
-
-                // The doctor must respond by 6:00 PM IST on the day before
-                // the appointment. Reject bookings after that deadline.
-                LocalDateTime responseDeadline = LocalDateTime.of(
-                        appointment.getAppointmentDate().toLocalDate().minusDays(1),
-                        LocalTime.of(18, 0));
-
-                LocalDateTime currentDateTime =
-                        LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
-
-                if (!responseDeadline.isAfter(currentDateTime)) {
-                    response.sendRedirect(
-                            request.getContextPath()
-                                    + "/patient/book-appointment.jsp"
-                                    + "?error=responseDeadlinePassed");
-                    return;
-                }
-
-                boolean slotAvailable = appointmentDAO.isSlotAvailable(
-
-                        appointment.getDoctorId(),
-
-                        appointment.getAppointmentDate(),
-
-                        appointment.getAppointmentTime());
+						request.getParameter("departmentId")));
 
 
 
-                if (!slotAvailable) {
+				appointment.setAppointmentDate(Date.valueOf(
 
-                    response.sendRedirect(
+						request.getParameter("appointmentDate")));
 
-                            request.getContextPath()
 
-                                    + "/patient/book-appointment.jsp"
+
+				String appointmentTime =
+
+						request.getParameter("appointmentTime");
+
+
+
+				if (appointmentTime != null
+
+						&& appointmentTime.length() == 5) {
+
+					appointmentTime += ":00";
+
+				}
+
+
+
+				appointment.setAppointmentTime(Time.valueOf(appointmentTime));
+
+				appointment.setReason(request.getParameter("reason"));
+
+				appointment.setStatus("PENDING");
+
+				appointment.setNotes(request.getParameter("notes"));
+
+
+
+
+
+				// The doctor must respond by 6:00 PM IST on the day before
+				// the appointment. Reject bookings after that deadline.
+				LocalDateTime responseDeadline = LocalDateTime.of(
+						appointment.getAppointmentDate().toLocalDate().minusDays(1),
+						LocalTime.of(18, 0));
+
+				LocalDateTime currentDateTime =
+						LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
+
+				if (!responseDeadline.isAfter(currentDateTime)) {
+					response.sendRedirect(
+							request.getContextPath()
+							+ "/patient/book-appointment.jsp"
+							+ "?error=responseDeadlinePassed");
+					return;
+				}
+
+				boolean slotAvailable = appointmentDAO.isSlotAvailable(
+
+						appointment.getDoctorId(),
+
+						appointment.getAppointmentDate(),
+
+						appointment.getAppointmentTime());
+
+
+
+				if (!slotAvailable) {
+
+					response.sendRedirect(
+
+							request.getContextPath()
+
+							+ "/patient/book-appointment.jsp"
 
                                     + "?error=slotUnavailable");
 
-                    return;
+					return;
 
-                }
-
-
-
-                int appointmentId =
-
-                        appointmentDAO.addAppointmentAndGetId(appointment);
+				}
 
 
 
-                if (appointmentId > 0) {
+
+				// Validate uploaded medical documents
+				List<Part> medicalUploadParts;
+				String documentType = request.getParameter("documentType");
+
+				try {
+
+					medicalUploadParts = validateMedicalUploads(request);
+
+					if (!medicalUploadParts.isEmpty()
+							&& (documentType == null
+							|| !List.of(
+									"PRESCRIPTION",
+									"XRAY",
+									"MRI",
+									"CT_SCAN",
+									"LAB_REPORT",
+									"DISCHARGE_SUMMARY",
+									"OTHER"
+									).contains(documentType))) {
+
+						throw new IllegalArgumentException(
+								"Please select a valid document category.");
+					}
+
+				} catch (Exception e) {
+
+					e.printStackTrace();
+
+					response.sendRedirect(
+							request.getContextPath()
+							+ "/patient/book-appointment.jsp"
+							+ "?error=invalidMedicalDocument");
+
+					return;
+				}
+
+
+				int appointmentId =
+						appointmentDAO.addAppointmentAndGetId(appointment);
+
+				if (appointmentId > 0) {
+
+					if (!medicalUploadParts.isEmpty()) {
+
+						try {
+							saveMedicalDocuments(
+									medicalUploadParts,
+									loggedPatient.getPatientId(),
+									appointmentId,
+									documentType
+									);
+
+						} catch (Exception e) {
+							e.printStackTrace();
+
+							response.sendRedirect(
+									request.getContextPath()
+									+ "/patient/book-appointment.jsp"
+									+ "?error=documentUploadFailed"
+									);
+							return;
+						}
+					}
+
+					// Existing Doctor notification and email logic continues here.
+
+
+					Doctor doctor =
+
+							doctorDAO.getDoctorById(appointment.getDoctorId());
 
 
 
-                    Doctor doctor =
+					if (doctor != null) {
 
-                            doctorDAO.getDoctorById(appointment.getDoctorId());
-
-
-
-                    if (doctor != null) {
-
-                        Notification notification = new Notification();
+						Notification notification = new Notification();
 
 
 
-                        notification.setUserId(doctor.getUserId());
+						notification.setUserId(doctor.getUserId());
 
-                        notification.setAppointmentId(appointmentId);
+						notification.setAppointmentId(appointmentId);
 
-                        notification.setNotificationType("APPOINTMENT_REQUEST");
+						notification.setNotificationType("APPOINTMENT_REQUEST");
 
-                        notification.setTitle("New Appointment Request");
-
-
-
-                        Patient patient =
-
-                                patientDAO.getPatientById(
-
-                                        appointment.getPatientId());
+						notification.setTitle("New Appointment Request");
 
 
 
-                        String patientName = "Patient";
+						Patient patient =
+
+								patientDAO.getPatientById(
+
+										appointment.getPatientId());
 
 
 
-                        if (patient != null) {
-
-                            User patientUser =
-
-                                    userDAO.getUserById(patient.getUserId());
+						String patientName = "Patient";
 
 
 
-                            if (patientUser != null
+						if (patient != null) {
 
-                                    && patientUser.getFullName() != null
+							User patientUser =
 
-                                    && !patientUser.getFullName().trim().isEmpty()) {
-
-                                patientName = patientUser.getFullName();
-
-                            }
-
-                        }
+									userDAO.getUserById(patient.getUserId());
 
 
 
-                        notification.setMessage(
+							if (patientUser != null
 
-                                patientName
+									&& patientUser.getFullName() != null
 
-                                        + " has requested an appointment with you. "
+									&& !patientUser.getFullName().trim().isEmpty()) {
+
+								patientName = patientUser.getFullName();
+
+							}
+
+						}
+
+
+
+						notification.setMessage(
+
+								patientName
+
+								+ " has requested an appointment with you. "
 
                                         + "Date: " + appointment.getAppointmentDate()
 
@@ -852,543 +979,543 @@ public class AppointmentController extends HttpServlet {
 
 
 
-                        notification.setRead(false);
+						notification.setRead(false);
 
-                        notificationDAO.addNotification(notification);
+						notificationDAO.addNotification(notification);
 
-                    }
+					}
 
 
 
-                    // Send new-booking email to the CareWell Hospital inbox only.
-                    try {
-                        String hospitalEmail =
-                                System.getenv("CAREWELL_HOSPITAL_EMAIL");
+					// Send new-booking email to the CareWell Hospital inbox only.
+					try {
+						String hospitalEmail =
+								System.getenv("CAREWELL_HOSPITAL_EMAIL");
 
-                        if (hospitalEmail == null
-                                || hospitalEmail.trim().isEmpty()) {
-                            System.err.println(
-                                    "Booking email not sent: CAREWELL_HOSPITAL_EMAIL "
-                                            + "is not configured. Appointment ID: "
-                                            + appointmentId);
-                        } else {
-                            Patient bookingPatient =
-                                    patientDAO.getPatientById(
-                                            appointment.getPatientId());
+						if (hospitalEmail == null
+								|| hospitalEmail.trim().isEmpty()) {
+							System.err.println(
+									"Booking email not sent: CAREWELL_HOSPITAL_EMAIL "
+											+ "is not configured. Appointment ID: "
+											+ appointmentId);
+						} else {
+							Patient bookingPatient =
+									patientDAO.getPatientById(
+											appointment.getPatientId());
 
-                            String patientName = "Patient";
-                            if (bookingPatient != null) {
-                                User patientUser =
-                                        userDAO.getUserById(
-                                                bookingPatient.getUserId());
-                                if (patientUser != null
-                                        && patientUser.getFullName() != null
-                                        && !patientUser.getFullName().trim().isEmpty()) {
-                                    patientName = patientUser.getFullName();
-                                }
-                            }
+							String patientName = "Patient";
+							if (bookingPatient != null) {
+								User patientUser =
+										userDAO.getUserById(
+												bookingPatient.getUserId());
+								if (patientUser != null
+										&& patientUser.getFullName() != null
+										&& !patientUser.getFullName().trim().isEmpty()) {
+									patientName = patientUser.getFullName();
+								}
+							}
 
-                            String subject =
-                                    "CareWell Hospital - New Appointment Request";
+							String subject =
+									"CareWell Hospital - New Appointment Request";
 
 
 							String body =
-							        "A new appointment request has been received.\n\n"
-							      + "Appointment ID: " + appointmentId + "\n"
-							      + "Patient: " + patientName + "\n"
-							      + "Doctor ID: " + appointment.getDoctorId() + "\n"
-							      + "Department ID: " + appointment.getDepartmentId() + "\n"
-							      + "Date: " + appointment.getAppointmentDate() + "\n"
-							      + "Time: " + appointment.getAppointmentTime() + "\n"
-							      + "Reason: " + appointment.getReason() + "\n"
-							      + "Status: PENDING\n\n"
-							      + "Please sign in to CareWell Hospital to review "
-							      + "and confirm or reject this appointment.\n\n"
-							      + "Regards,\nCareWell Hospital";
+									"A new appointment request has been received.\n\n"
+											+ "Appointment ID: " + appointmentId + "\n"
+											+ "Patient: " + patientName + "\n"
+											+ "Doctor ID: " + appointment.getDoctorId() + "\n"
+											+ "Department ID: " + appointment.getDepartmentId() + "\n"
+											+ "Date: " + appointment.getAppointmentDate() + "\n"
+											+ "Time: " + appointment.getAppointmentTime() + "\n"
+											+ "Reason: " + appointment.getReason() + "\n"
+											+ "Status: PENDING\n\n"
+											+ "Please sign in to CareWell Hospital to review "
+											+ "and confirm or reject this appointment.\n\n"
+											+ "Regards,\nCareWell Hospital";
 
 
-                            boolean emailSent = EmailService.sendEmail(
-                                    hospitalEmail.trim(), subject, body);
+							boolean emailSent = EmailService.sendEmail(
+									hospitalEmail.trim(), subject, body);
 
-                            if (!emailSent) {
-                                System.err.println(
-                                        "Appointment saved, but hospital booking email failed. "
-                                                + "Appointment ID: " + appointmentId);
-                            }
-                        }
-                    } catch (Exception emailException) {
-                        System.err.println(
-                                "Appointment saved, but hospital booking email failed.");
-                        emailException.printStackTrace();
-                    }
+							if (!emailSent) {
+								System.err.println(
+										"Appointment saved, but hospital booking email failed. "
+												+ "Appointment ID: " + appointmentId);
+							}
+						}
+					} catch (Exception emailException) {
+						System.err.println(
+								"Appointment saved, but hospital booking email failed.");
+						emailException.printStackTrace();
+					}
 
-                    response.sendRedirect(
+					response.sendRedirect(
 
-                            request.getContextPath()
+							request.getContextPath()
 
-                                    + "/patient/booking-success.jsp");
+							+ "/patient/booking-success.jsp");
 
 
 
-                } else {
+				} else {
 
-                    response.sendRedirect(
+					response.sendRedirect(
 
-                            request.getContextPath()
+							request.getContextPath()
 
-                                    + "/patient/book-appointment.jsp"
+							+ "/patient/book-appointment.jsp"
 
                                     + "?error=bookingFailed");
 
-                }
+				}
 
-            }
+			}
 
 
 
-            // ADMIN - UPDATE APPOINTMENT
+			// ADMIN - UPDATE APPOINTMENT
 
-            else if ("update".equals(action)) {
+			else if ("update".equals(action)) {
 
 
 
-                Appointment appointment = new Appointment();
+				Appointment appointment = new Appointment();
 
 
 
-                appointment.setAppointmentId(Integer.parseInt(
+				appointment.setAppointmentId(Integer.parseInt(
 
-                        request.getParameter("appointmentId")));
+						request.getParameter("appointmentId")));
 
-                appointment.setPatientId(Integer.parseInt(
+				appointment.setPatientId(Integer.parseInt(
 
-                        request.getParameter("patientId")));
+						request.getParameter("patientId")));
 
-                appointment.setDoctorId(Integer.parseInt(
+				appointment.setDoctorId(Integer.parseInt(
 
-                        request.getParameter("doctorId")));
+						request.getParameter("doctorId")));
 
-                appointment.setDepartmentId(Integer.parseInt(
+				appointment.setDepartmentId(Integer.parseInt(
 
-                        request.getParameter("departmentId")));
+						request.getParameter("departmentId")));
 
-                appointment.setAppointmentDate(Date.valueOf(
+				appointment.setAppointmentDate(Date.valueOf(
 
-                        request.getParameter("appointmentDate")));
+						request.getParameter("appointmentDate")));
 
 
 
-                String appointmentTime =
+				String appointmentTime =
 
-                        request.getParameter("appointmentTime");
+						request.getParameter("appointmentTime");
 
 
 
-                if (appointmentTime != null
+				if (appointmentTime != null
 
-                        && appointmentTime.length() == 5) {
+						&& appointmentTime.length() == 5) {
 
-                    appointmentTime += ":00";
+					appointmentTime += ":00";
 
-                }
+				}
 
 
 
-                appointment.setAppointmentTime(Time.valueOf(appointmentTime));
+				appointment.setAppointmentTime(Time.valueOf(appointmentTime));
 
-                appointment.setReason(request.getParameter("reason"));
+				appointment.setReason(request.getParameter("reason"));
 
-                appointment.setStatus(request.getParameter("status"));
+				appointment.setStatus(request.getParameter("status"));
 
-                appointment.setNotes(request.getParameter("notes"));
+				appointment.setNotes(request.getParameter("notes"));
 
 
 
-                boolean success = appointmentDAO.updateAppointment(appointment);
+				boolean success = appointmentDAO.updateAppointment(appointment);
 
 
 
-                if (success) {
+				if (success) {
 
-                    response.sendRedirect(
+					response.sendRedirect(
 
-                            request.getContextPath()
+							request.getContextPath()
 
-                                    + "/appointments?action=list");
+							+ "/appointments?action=list");
 
-                } else {
+				} else {
 
-                    response.sendRedirect(
+					response.sendRedirect(
 
-                            request.getContextPath()
+							request.getContextPath()
 
-                                    + "/appointments?action=list&error=updateFailed");
+							+ "/appointments?action=list&error=updateFailed");
 
-                }
+				}
 
-            }
+			}
 
 
 
-            // DOCTOR - CONFIRM APPOINTMENT
+			// DOCTOR - CONFIRM APPOINTMENT
 
-            else if ("confirm".equals(action)) {
+			else if ("confirm".equals(action)) {
 
 
 
-                User loggedUser = getLoggedDoctorUser(request, response);
+				User loggedUser = getLoggedDoctorUser(request, response);
 
-                if (loggedUser == null) {
+				if (loggedUser == null) {
 
-                    return;
+					return;
 
-                }
+				}
 
 
 
-                int appointmentId = Integer.parseInt(
+				int appointmentId = Integer.parseInt(
 
-                        request.getParameter("appointmentId"));
+						request.getParameter("appointmentId"));
 
 
 
-                Doctor loggedDoctor = findLoggedDoctor(loggedUser);
+				Doctor loggedDoctor = findLoggedDoctor(loggedUser);
 
-                if (loggedDoctor == null) {
+				if (loggedDoctor == null) {
 
-                    response.sendRedirect(
+					response.sendRedirect(
 
-                            request.getContextPath() + "/login.jsp");
+							request.getContextPath() + "/login.jsp");
 
-                    return;
+					return;
 
-                }
+				}
 
 
 
-                Appointment appointment =
+				Appointment appointment =
 
-                        appointmentDAO.getAppointmentById(appointmentId);
+						appointmentDAO.getAppointmentById(appointmentId);
 
 
 
-                if (appointment == null
+				if (appointment == null
 
-                        || appointment.getDoctorId()
+						|| appointment.getDoctorId()
 
-                                != loggedDoctor.getDoctorId()
+						!= loggedDoctor.getDoctorId()
 
-                        || !"PENDING".equalsIgnoreCase(appointment.getStatus())) {
+						|| !"PENDING".equalsIgnoreCase(appointment.getStatus())) {
 
-                    response.sendRedirect(
+					response.sendRedirect(
 
-                            request.getContextPath()
+							request.getContextPath()
 
-                                    + "/appointments?action=doctor&error=invalidAppointment");
+							+ "/appointments?action=doctor&error=invalidAppointment");
 
-                    return;
+					return;
 
-                }
+				}
 
 
 
-                appointment.setStatus("CONFIRMED");
+				appointment.setStatus("CONFIRMED");
 
 
 
-                boolean success = appointmentDAO.updateAppointment(appointment);
+				boolean success = appointmentDAO.updateAppointment(appointment);
 
 
 
-                if (success) {
+				if (success) {
 
-                    Patient patient =
+					Patient patient =
 
-                            patientDAO.getPatientById(appointment.getPatientId());
+							patientDAO.getPatientById(appointment.getPatientId());
 
 
 
-                    if (patient != null) {
+					if (patient != null) {
 
-                        Notification notification = new Notification();
+						Notification notification = new Notification();
 
 
 
-                        notification.setUserId(patient.getUserId());
+						notification.setUserId(patient.getUserId());
 
-                        notification.setAppointmentId(
+						notification.setAppointmentId(
 
-                                appointment.getAppointmentId());
+								appointment.getAppointmentId());
 
-                        notification.setNotificationType("APPOINTMENT_CONFIRMED");
+						notification.setNotificationType("APPOINTMENT_CONFIRMED");
 
-                        notification.setTitle("Appointment Confirmed");
+						notification.setTitle("Appointment Confirmed");
 
-                        notification.setMessage(
+						notification.setMessage(
 
-                                loggedUser.getFullName()
+								loggedUser.getFullName()
 
-                                        + " has confirmed your appointment on "
+								+ " has confirmed your appointment on "
 
                                         + appointment.getAppointmentDate()
 
                                         + " at " + appointment.getAppointmentTime() + ".");
 
-                        notification.setRead(false);
+						notification.setRead(false);
 
 
 
-                        notificationDAO.addNotification(notification);
+						notificationDAO.addNotification(notification);
 
-                    }
-
-
-
-                    // Email only after successful confirmation.
-
-                    try {
-
-                        Patient confirmedPatient =
-
-                                patientDAO.getPatientById(
-
-                                        appointment.getPatientId());
+					}
 
 
 
-                        if (confirmedPatient != null) {
+					// Email only after successful confirmation.
 
-                            User patientUser =
+					try {
 
-                                    userDAO.getUserById(confirmedPatient.getUserId());
+						Patient confirmedPatient =
 
+								patientDAO.getPatientById(
 
-
-                            if (patientUser != null
-
-                                    && patientUser.getEmail() != null
-
-                                    && !patientUser.getEmail().trim().isEmpty()) {
+										appointment.getPatientId());
 
 
 
-                                String subject =
+						if (confirmedPatient != null) {
 
-                                        "CareWell Hospital - Appointment Confirmed";
+							User patientUser =
+
+									userDAO.getUserById(confirmedPatient.getUserId());
+
+
+
+							if (patientUser != null
+
+									&& patientUser.getEmail() != null
+
+									&& !patientUser.getEmail().trim().isEmpty()) {
+
+
+
+								String subject =
+
+										"CareWell Hospital - Appointment Confirmed";
 
 
 
 
 								String body =
-								        "Your appointment has been confirmed.\n\n"
-								      + "Appointment ID: " + appointment.getAppointmentId() + "\n"
-								      + "Patient: " + patientUser.getFullName() + "\n"
-								      + "Doctor ID: " + appointment.getDoctorId() + "\n"
-								      + "Date: " + appointment.getAppointmentDate() + "\n"
-								      + "Time: " + appointment.getAppointmentTime() + "\n\n"
-								      + "Please arrive on time for your appointment.\n\n"
-								      + "Regards,\nCareWell Hospital";
+										"Your appointment has been confirmed.\n\n"
+												+ "Appointment ID: " + appointment.getAppointmentId() + "\n"
+												+ "Patient: " + patientUser.getFullName() + "\n"
+												+ "Doctor ID: " + appointment.getDoctorId() + "\n"
+												+ "Date: " + appointment.getAppointmentDate() + "\n"
+												+ "Time: " + appointment.getAppointmentTime() + "\n\n"
+												+ "Please arrive on time for your appointment.\n\n"
+												+ "Regards,\nCareWell Hospital";
 
 
 
 
-                                	
-
-                                boolean emailSent = EmailService.sendEmail(
-
-                                        patientUser.getEmail(), subject, body);
 
 
+								boolean emailSent = EmailService.sendEmail(
 
-                                if (!emailSent) {
+										patientUser.getEmail(), subject, body);
 
-                                    System.err.println(
 
-                                            "Confirmation email failed for appointment "
+
+								if (!emailSent) {
+
+									System.err.println(
+
+											"Confirmation email failed for appointment "
 
                                                     + appointment.getAppointmentId());
 
-                                }
+								}
 
-                            }
+							}
 
-                        }
+						}
 
-                    } catch (Exception emailException) {
+					} catch (Exception emailException) {
 
-                        System.err.println(
+						System.err.println(
 
-                                "Appointment confirmed, but patient email failed.");
+								"Appointment confirmed, but patient email failed.");
 
-                        emailException.printStackTrace();
+						emailException.printStackTrace();
 
-                    }
+					}
 
-                }
+				}
 
 
 
-                response.sendRedirect(
+				response.sendRedirect(
 
-                        request.getContextPath()
+						request.getContextPath()
 
-                                + "/appointments?action=doctor&message=confirmed");
+						+ "/appointments?action=doctor&message=confirmed");
 
-            }
+			}
 
 
 
-            // DOCTOR - CANCEL / REJECT APPOINTMENT
+			// DOCTOR - CANCEL / REJECT APPOINTMENT
 
-            else if ("cancel".equals(action)) {
+			else if ("cancel".equals(action)) {
 
 
 
-                User loggedUser = getLoggedDoctorUser(request, response);
+				User loggedUser = getLoggedDoctorUser(request, response);
 
-                if (loggedUser == null) {
+				if (loggedUser == null) {
 
-                    return;
+					return;
 
-                }
+				}
 
 
 
-                int appointmentId = Integer.parseInt(
+				int appointmentId = Integer.parseInt(
 
-                        request.getParameter("appointmentId"));
+						request.getParameter("appointmentId"));
 
 
 
-                Doctor loggedDoctor = findLoggedDoctor(loggedUser);
+				Doctor loggedDoctor = findLoggedDoctor(loggedUser);
 
-                if (loggedDoctor == null) {
+				if (loggedDoctor == null) {
 
-                    response.sendRedirect(
+					response.sendRedirect(
 
-                            request.getContextPath() + "/login.jsp");
+							request.getContextPath() + "/login.jsp");
 
-                    return;
+					return;
 
-                }
+				}
 
 
 
-                Appointment appointment =
+				Appointment appointment =
 
-                        appointmentDAO.getAppointmentById(appointmentId);
+						appointmentDAO.getAppointmentById(appointmentId);
 
 
 
-                if (appointment == null
+				if (appointment == null
 
-                        || appointment.getDoctorId()
+						|| appointment.getDoctorId()
 
-                                != loggedDoctor.getDoctorId()
+						!= loggedDoctor.getDoctorId()
 
-                        || !"PENDING".equalsIgnoreCase(appointment.getStatus())) {
+						|| !"PENDING".equalsIgnoreCase(appointment.getStatus())) {
 
-                    response.sendRedirect(
+					response.sendRedirect(
 
-                            request.getContextPath()
+							request.getContextPath()
 
-                                    + "/appointments?action=doctor&error=invalidAppointment");
+							+ "/appointments?action=doctor&error=invalidAppointment");
 
-                    return;
+					return;
 
-                }
+				}
 
 
 
-                appointment.setStatus("CANCELLED");
+				appointment.setStatus("CANCELLED");
 
 
 
-                boolean success = appointmentDAO.updateAppointment(appointment);
+				boolean success = appointmentDAO.updateAppointment(appointment);
 
 
 
-                if (success) {
+				if (success) {
 
-                    Patient patient =
+					Patient patient =
 
-                            patientDAO.getPatientById(appointment.getPatientId());
+							patientDAO.getPatientById(appointment.getPatientId());
 
 
 
-                    if (patient != null) {
+					if (patient != null) {
 
-                        Notification notification = new Notification();
+						Notification notification = new Notification();
 
 
 
-                        notification.setUserId(patient.getUserId());
+						notification.setUserId(patient.getUserId());
 
-                        notification.setAppointmentId(
+						notification.setAppointmentId(
 
-                                appointment.getAppointmentId());
+								appointment.getAppointmentId());
 
-                        notification.setNotificationType("APPOINTMENT_CANCELLED");
+						notification.setNotificationType("APPOINTMENT_CANCELLED");
 
-                        notification.setTitle("Appointment Cancelled");
+						notification.setTitle("Appointment Cancelled");
 
-                        notification.setMessage(
+						notification.setMessage(
 
-                                loggedUser.getFullName()
+								loggedUser.getFullName()
 
-                                        + " has cancelled your appointment scheduled for "
+								+ " has cancelled your appointment scheduled for "
 
                                         + appointment.getAppointmentDate()
 
                                         + " at " + appointment.getAppointmentTime() + ".");
 
-                        notification.setRead(false);
+						notification.setRead(false);
 
 
 
-                        notificationDAO.addNotification(notification);
+						notificationDAO.addNotification(notification);
 
-                    }
-
-
-
-                    // Email only after successful cancellation.
-
-                    try {
-
-                        Patient cancelledPatient =
-
-                                patientDAO.getPatientById(
-
-                                        appointment.getPatientId());
+					}
 
 
 
-                        if (cancelledPatient != null) {
+					// Email only after successful cancellation.
 
-                            User patientUser =
+					try {
 
-                                    userDAO.getUserById(cancelledPatient.getUserId());
+						Patient cancelledPatient =
 
+								patientDAO.getPatientById(
 
-
-                            if (patientUser != null
-
-                                    && patientUser.getEmail() != null
-
-                                    && !patientUser.getEmail().trim().isEmpty()) {
+										appointment.getPatientId());
 
 
 
-                                String subject =
+						if (cancelledPatient != null) {
 
-                                        "CareWell Hospital - Appointment Cancelled";
+							User patientUser =
+
+									userDAO.getUserById(cancelledPatient.getUserId());
 
 
 
-                                String body =
+							if (patientUser != null
 
-                                        "Dear " + patientUser.getFullName() + ",\n\n"
+									&& patientUser.getEmail() != null
+
+									&& !patientUser.getEmail().trim().isEmpty()) {
+
+
+
+								String subject =
+
+										"CareWell Hospital - Appointment Cancelled";
+
+
+
+								String body =
+
+										"Dear " + patientUser.getFullName() + ",\n\n"
 
                                       + "Your appointment has been cancelled by the doctor.\n\n"
 
@@ -1406,140 +1533,349 @@ public class AppointmentController extends HttpServlet {
 
 
 
-                                boolean emailSent = EmailService.sendEmail(
+								boolean emailSent = EmailService.sendEmail(
 
-                                        patientUser.getEmail(), subject, body);
+										patientUser.getEmail(), subject, body);
 
 
 
-                                if (!emailSent) {
+								if (!emailSent) {
 
-                                    System.err.println(
+									System.err.println(
 
-                                            "Cancellation email failed for appointment "
+											"Cancellation email failed for appointment "
 
                                                     + appointment.getAppointmentId());
 
-                                }
+								}
 
-                            }
+							}
 
-                        }
+						}
 
-                    } catch (Exception emailException) {
+					} catch (Exception emailException) {
 
-                        System.err.println(
+						System.err.println(
 
-                                "Appointment cancelled, but patient email failed.");
+								"Appointment cancelled, but patient email failed.");
 
-                        emailException.printStackTrace();
+						emailException.printStackTrace();
 
-                    }
+					}
 
-                }
+				}
 
 
 
-                response.sendRedirect(
+				response.sendRedirect(
 
-                        request.getContextPath()
+						request.getContextPath()
 
-                                + "/appointments?action=doctor&message=cancelled");
+						+ "/appointments?action=doctor&message=cancelled");
 
-            }
+			}
 
 
 
-        } catch (Exception e) {
+		} catch (Exception e) {
 
-            e.printStackTrace();
+			e.printStackTrace();
 
 
 
-            response.sendRedirect(
+			response.sendRedirect(
 
-                    request.getContextPath()
+					request.getContextPath()
 
-                            + "/appointments?action=list&error=invalidData");
+					+ "/appointments?action=list&error=invalidData");
 
-        }
+		}
 
-    }
+	}
 
 
 
-    // =========================================================
+	// =========================================================
 
-    // HELPER METHODS
+	// HELPER METHODS
 
-    // =========================================================
+	// =========================================================
 
 
 
-    private Doctor findLoggedDoctor(User user) {
+	private Doctor findLoggedDoctor(User user) {
 
-        List<Doctor> doctors = doctorDAO.getAllDoctors();
+		List<Doctor> doctors = doctorDAO.getAllDoctors();
 
 
 
-        for (Doctor doctor : doctors) {
+		for (Doctor doctor : doctors) {
 
-            if (doctor.getUserId() == user.getUserId()) {
+			if (doctor.getUserId() == user.getUserId()) {
 
-                return doctor;
+				return doctor;
 
-            }
+			}
 
-        }
+		}
 
 
 
-        return null;
+		return null;
 
-    }
+	}
 
 
 
-    private User getLoggedDoctorUser(HttpServletRequest request,
+	private User getLoggedDoctorUser(HttpServletRequest request,
 
-                                     HttpServletResponse response)
+			HttpServletResponse response)
 
-            throws IOException {
+					throws IOException {
 
 
 
-        HttpSession session = request.getSession(false);
+		HttpSession session = request.getSession(false);
 
 
 
-        if (session == null) {
+		if (session == null) {
 
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+			response.sendRedirect(request.getContextPath() + "/login.jsp");
 
-            return null;
+			return null;
 
-        }
+		}
 
 
 
-        User user = (User) session.getAttribute("user");
+		User user = (User) session.getAttribute("user");
 
 
 
-        if (user == null
+		if (user == null
 
-                || !"DOCTOR".equalsIgnoreCase(user.getRole())) {
+				|| !"DOCTOR".equalsIgnoreCase(user.getRole())) {
 
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+			response.sendRedirect(request.getContextPath() + "/login.jsp");
 
-            return null;
+			return null;
 
-        }
+		}
 
 
 
-        return user;
+		return user;
 
-    }
+	}
 
+
+	private List<Part> validateMedicalUploads(
+			HttpServletRequest request)
+					throws IOException, ServletException {
+
+		List<Part> uploadedFiles = new ArrayList<>();
+
+		for (Part part : request.getParts()) {
+
+			String fileName = part.getSubmittedFileName();
+
+			// Ignore normal form fields and empty file inputs.
+			if (fileName == null || fileName.isBlank()) {
+				continue;
+			}
+
+			if (part.getSize() == 0) {
+				throw new IllegalArgumentException(
+						"An uploaded document is empty."
+						);
+			}
+
+			if (part.getSize() > 5 * 1024 * 1024) {
+				throw new IllegalArgumentException(
+						"Each document must be 5 MB or smaller."
+						);
+			}
+
+			String lowerFileName =
+					fileName.toLowerCase(Locale.ROOT);
+
+			boolean validExtension =
+					lowerFileName.endsWith(".pdf")
+					|| lowerFileName.endsWith(".jpg")
+					|| lowerFileName.endsWith(".jpeg")
+					|| lowerFileName.endsWith(".png");
+
+			if (!validExtension) {
+				throw new IllegalArgumentException(
+						"Only PDF, JPG and PNG files are allowed."
+						);
+			}
+			
+			String extension = lowerFileName.substring(
+			        lowerFileName.lastIndexOf(".")
+			);
+
+			if (!hasValidFileSignature(part, extension)) {
+			    throw new IllegalArgumentException(
+			            "The uploaded file content does not match its extension."
+			    );
+			}
+
+			String contentType = part.getContentType();
+
+			boolean validContentType =
+					contentType != null
+					&& (
+							contentType.equalsIgnoreCase("application/pdf")
+							|| contentType.equalsIgnoreCase("image/jpeg")
+							|| contentType.equalsIgnoreCase("image/png")
+							);
+
+			if (!validContentType) {
+				throw new IllegalArgumentException(
+						"Invalid document content type."
+						);
+			}
+
+			uploadedFiles.add(part);
+
+			if (uploadedFiles.size() > 5) {
+				throw new IllegalArgumentException(
+						"You can upload a maximum of 5 documents."
+						);
+			}
+		}
+
+		return uploadedFiles;
+	}
+
+	private void saveMedicalDocuments(
+			List<Part> uploadedFiles,
+			int patientId,
+			int appointmentId,
+			String documentType) throws Exception {
+
+		List<String> savedStorageKeys = new ArrayList<>();
+		List<Integer> savedDocumentIds = new ArrayList<>();
+
+		try {
+
+			for (Part part : uploadedFiles) {
+
+				String fileName = part.getSubmittedFileName()
+						.replace("\\", "/");
+
+				fileName = fileName.substring(
+						fileName.lastIndexOf("/") + 1);
+
+				String lowerName = fileName.toLowerCase(Locale.ROOT);
+
+				String extension;
+
+				if (lowerName.endsWith(".pdf")) {
+					extension = ".pdf";
+				} else if (lowerName.endsWith(".jpg")) {
+					extension = ".jpg";
+				} else if (lowerName.endsWith(".jpeg")) {
+					extension = ".jpeg";
+				} else if (lowerName.endsWith(".png")) {
+					extension = ".png";
+				} else {
+					throw new IOException("Unsupported file extension.");
+				}
+
+				String storageKey;
+
+				try (InputStream inputStream = part.getInputStream()) {
+					storageKey = FileStorageUtil.saveFile(
+							inputStream, extension);
+				}
+
+				savedStorageKeys.add(storageKey);
+
+				MedicalDocument document = new MedicalDocument();
+
+				document.setPatientId(patientId);
+				document.setAppointmentId(appointmentId);
+				document.setDocumentType(documentType);
+				document.setOriginalFileName(fileName);
+				document.setStorageKey(storageKey);
+				document.setContentType(part.getContentType());
+				document.setFileSizeBytes(part.getSize());
+				document.setValidationStatus("PENDING_REVIEW");
+
+				if (!medicalDocumentDAO.addDocument(document)) {
+					throw new IOException(
+							"Failed to save medical document information.");
+				}
+
+				savedDocumentIds.add(document.getDocumentId());
+			}
+
+		} catch (Exception e) {
+
+			// Remove database records already created.
+			for (Integer documentId : savedDocumentIds) {
+				try {
+					medicalDocumentDAO.deleteDocument(documentId);
+				} catch (Exception cleanupException) {
+					cleanupException.printStackTrace();
+				}
+			}
+
+			// Remove physical files already stored.
+			for (String storageKey : savedStorageKeys) {
+				try {
+					FileStorageUtil.deleteFile(storageKey);
+				} catch (Exception cleanupException) {
+					cleanupException.printStackTrace();
+				}
+			}
+
+			throw e;
+		}
+	}
+	
+	private boolean hasValidFileSignature(Part part, String extension)
+	        throws IOException {
+
+	    byte[] header = new byte[8];
+
+	    try (InputStream inputStream = part.getInputStream()) {
+	        int bytesRead = inputStream.read(header);
+
+	        if (bytesRead < 4) {
+	            return false;
+	        }
+	    }
+
+	    switch (extension.toLowerCase(Locale.ROOT)) {
+
+	        case ".pdf":
+	            return header[0] == 0x25
+	                    && header[1] == 0x50
+	                    && header[2] == 0x44
+	                    && header[3] == 0x46;
+
+	        case ".jpg":
+	        case ".jpeg":
+	            return (header[0] & 0xFF) == 0xFF
+	                    && (header[1] & 0xFF) == 0xD8
+	                    && (header[2] & 0xFF) == 0xFF;
+
+	        case ".png":
+	            return (header[0] & 0xFF) == 0x89
+	                    && header[1] == 0x50
+	                    && header[2] == 0x4E
+	                    && header[3] == 0x47
+	                    && header[4] == 0x0D
+	                    && header[5] == 0x0A
+	                    && header[6] == 0x1A
+	                    && header[7] == 0x0A;
+
+	        default:
+	            return false;
+	    }
+	}
 }

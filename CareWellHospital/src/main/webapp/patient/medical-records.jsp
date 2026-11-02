@@ -233,6 +233,15 @@
             <span>Prescriptions</span>
 
         </a>
+        
+        <!-- AI MEDICINE ASSISTANT -->
+<a href="<%= request.getContextPath() %>/patient/ai-medicine-assistant.jsp"
+   class="nav-item">
+
+    <span class="nav-icon">🤖</span>
+    <span>AI Medicine Assistant</span>
+
+</a>
 
         <!-- BILLS & PAYMENTS -->
 

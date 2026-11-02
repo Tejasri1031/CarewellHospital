@@ -242,6 +242,30 @@ public class UserDAOImpl implements UserDAO {
 
 		return null;
 	}
+	
+	@Override
+	public boolean updateUserStatus(int userId, String status) {
 
+	    if (!"ACTIVE".equals(status) && !"INACTIVE".equals(status)) {
+	        return false;
+	    }
+
+	    String sql = "UPDATE users SET status = ? "
+	            + "WHERE user_id = ? AND role IN ('DOCTOR', 'PATIENT')";
+
+	    try (Connection connection = DBConnection.getConnection();
+	            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+	        statement.setString(1, status);
+	        statement.setInt(2, userId);
+
+	        return statement.executeUpdate() > 0;
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return false;
+	}
 
 }

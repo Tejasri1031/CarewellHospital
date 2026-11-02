@@ -78,7 +78,7 @@ public class DepartmentDAOImpl implements DepartmentDAO {
     @Override
     public List<Department> getAllDepartments() {
 
-        String sql = "SELECT * FROM departments";
+    	String sql = "SELECT * FROM departments WHERE status = 'ACTIVE'";
 
         List<Department> departments = new ArrayList<>();
 
@@ -113,6 +113,11 @@ public class DepartmentDAOImpl implements DepartmentDAO {
         }
 
         return departments;
+    }
+    
+    @Override
+    public List<Department> getActiveDepartments() {
+        return getAllDepartments();
     }
 
     @Override
@@ -150,6 +155,65 @@ public class DepartmentDAOImpl implements DepartmentDAO {
             statement.setInt(1, departmentId);
 
             return statement.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+    
+    @Override
+    public List<Department> getAllDepartmentsIncludingInactive() {
+
+        String sql = "SELECT * FROM departments ORDER BY department_id";
+
+        List<Department> departments = new ArrayList<>();
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+
+                Department department = new Department();
+
+                department.setDepartmentId(resultSet.getInt("department_id"));
+                department.setDepartmentName(resultSet.getString("department_name"));
+                department.setDescription(resultSet.getString("description"));
+                department.setStatus(resultSet.getString("status"));
+                department.setCreatedAt(resultSet.getTimestamp("created_at"));
+
+                departments.add(department);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return departments;
+    }
+    
+    @Override
+    public boolean isDepartmentNameExists(
+            String departmentName, int excludeDepartmentId) {
+
+        String sql = "SELECT COUNT(*) FROM departments "
+                + "WHERE LOWER(TRIM(department_name)) = LOWER(TRIM(?)) "
+                + "AND department_id <> ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, departmentName);
+            statement.setInt(2, excludeDepartmentId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    return resultSet.getInt(1) > 0;
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

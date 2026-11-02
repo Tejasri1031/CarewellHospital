@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,6 +132,54 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
             while (resultSet.next()) {
                 appointments.add(mapAppointment(resultSet));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return appointments;
+    }
+    
+    @Override
+    public List<Appointment> getAllAppointmentsForAdmin() {
+
+        List<Appointment> appointments = new ArrayList<>();
+
+        String sql = "SELECT a.*, "
+                + "u1.full_name AS patient_name, "
+                + "u1.email AS patient_email, "
+                + "u2.full_name AS doctor_name, "
+                + "d.department_name AS department_name "
+                + "FROM appointments a "
+                + "JOIN patients p ON a.patient_id = p.patient_id "
+                + "JOIN users u1 ON p.user_id = u1.user_id "
+                + "JOIN doctors doc ON a.doctor_id = doc.doctor_id "
+                + "JOIN users u2 ON doc.user_id = u2.user_id "
+                + "JOIN departments d ON a.department_id = d.department_id "
+                + "ORDER BY a.appointment_date DESC, a.appointment_time ASC";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+
+                Appointment appointment = mapAppointment(resultSet);
+
+                appointment.setPatientName(
+                        resultSet.getString("patient_name"));
+
+                appointment.setPatientEmail(
+                        resultSet.getString("patient_email"));
+
+                appointment.setDoctorName(
+                        resultSet.getString("doctor_name"));
+
+                appointment.setDepartmentName(
+                        resultSet.getString("department_name"));
+
+                appointments.add(appointment);
             }
 
         } catch (Exception e) {
@@ -361,6 +410,26 @@ public class AppointmentDAOImpl implements AppointmentDAO {
     }
 
     @Override
+    public boolean updateAppointmentStatus(int appointmentId, String status) {
+
+        String sql = "UPDATE appointments SET status = ? "
+                   + "WHERE appointment_id = ? AND status = 'PENDING'";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, status);
+            preparedStatement.setInt(2, appointmentId);
+
+            return preparedStatement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    @Override
     public boolean deleteAppointment(int appointmentId) {
 
         String sql =
@@ -415,7 +484,62 @@ public class AppointmentDAOImpl implements AppointmentDAO {
 
         appointment.setCreatedAt(
                 resultSet.getTimestamp("created_at"));
+        
+        appointment.setResponseDueAt(
+                resultSet.getTimestamp("response_due_at"));
+
+        appointment.setReminderSentAt(
+                resultSet.getTimestamp("reminder_sent_at"));
+
+        appointment.setEscalatedAt(
+                resultSet.getTimestamp("escalated_at"));
+
+        appointment.setPatientNotifiedAt(
+                resultSet.getTimestamp("patient_notified_at"));
 
         return appointment;
+    }
+    
+    @Override
+    public Appointment getAppointmentDetailsForAdmin(int appointmentId) {
+
+        String sql = "SELECT a.*, "
+                + "u1.full_name AS patient_name, "
+                + "u1.email AS patient_email, "
+                + "u2.full_name AS doctor_name, "
+                + "d.department_name AS department_name "
+                + "FROM appointments a "
+                + "JOIN patients p ON a.patient_id = p.patient_id "
+                + "JOIN users u1 ON p.user_id = u1.user_id "
+                + "JOIN doctors doc ON a.doctor_id = doc.doctor_id "
+                + "JOIN users u2 ON doc.user_id = u2.user_id "
+                + "JOIN departments d ON a.department_id = d.department_id "
+                + "WHERE a.appointment_id = ?";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, appointmentId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+
+                    Appointment appointment = mapAppointment(resultSet);
+
+                    appointment.setPatientName(resultSet.getString("patient_name"));
+                    appointment.setPatientEmail(resultSet.getString("patient_email"));
+                    appointment.setDoctorName(resultSet.getString("doctor_name"));
+                    appointment.setDepartmentName(resultSet.getString("department_name"));
+
+                    return appointment;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

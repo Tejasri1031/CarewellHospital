@@ -12,6 +12,7 @@ public class Payment {
     private String transactionReference;
     private String paymentStatus;
     private Date paymentDate;
+    private String patientName;
 
     public Payment() {
     }
@@ -93,5 +94,13 @@ public class Payment {
 
     public void setPaymentDate(Date paymentDate) {
         this.paymentDate = paymentDate;
+    }
+    
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
     }
 }

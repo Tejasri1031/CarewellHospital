@@ -17,6 +17,19 @@ public class Appointment {
     private String notes;
     private Timestamp createdAt;
 
+    // Appointment escalation and notification tracking
+    private Timestamp responseDueAt;
+    private Timestamp reminderSentAt;
+    private Timestamp escalatedAt;
+    private Timestamp patientNotifiedAt;
+
+    // Admin appointment display fields
+    private String patientName;
+    private String patientEmail;
+    private String doctorName;
+    private String departmentName;
+    
+
     public Appointment() {
     }
 
@@ -116,5 +129,70 @@ public class Appointment {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+    
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public String getPatientEmail() {
+        return patientEmail;
+    }
+
+    public void setPatientEmail(String patientEmail) {
+        this.patientEmail = patientEmail;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
+    public
+    String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+    
+    public Timestamp getResponseDueAt() {
+        return responseDueAt;
+    }
+
+    public void setResponseDueAt(Timestamp responseDueAt) {
+        this.responseDueAt = responseDueAt;
+    }
+
+    public Timestamp getReminderSentAt() {
+        return reminderSentAt;
+    }
+
+    public void setReminderSentAt(Timestamp reminderSentAt) {
+        this.reminderSentAt = reminderSentAt;
+    }
+
+    public Timestamp getEscalatedAt() {
+        return escalatedAt;
+    }
+
+    public void setEscalatedAt(Timestamp escalatedAt) {
+        this.escalatedAt = escalatedAt;
+    }
+
+    public Timestamp getPatientNotifiedAt() {
+        return patientNotifiedAt;
+    }
+
+    public void setPatientNotifiedAt(Timestamp patientNotifiedAt) {
+        this.patientNotifiedAt = patientNotifiedAt;
     }
 }

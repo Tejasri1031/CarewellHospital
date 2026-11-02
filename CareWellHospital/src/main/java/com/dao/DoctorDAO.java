@@ -13,10 +13,16 @@ public interface DoctorDAO {
     List<Doctor> getAllDoctors();
 
     List<Doctor> getDoctorsByDepartment(int departmentId);
+    
+    List<Doctor> getAvailableDoctorsByDepartment(int departmentId);
 
     boolean updateDoctor(Doctor doctor);
 
     boolean deleteDoctor(int doctorId);
     
     List<Doctor> getFeaturedDoctors();
+    
+    List<Doctor> getAllDoctorsForAdmin();
+    
+    Doctor getDoctorDetailsForAdmin(int doctorId);
 }

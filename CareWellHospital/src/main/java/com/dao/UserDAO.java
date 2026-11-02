@@ -20,7 +20,8 @@ public interface UserDAO {
 
 	boolean updatePassword(int userId, String hashedPassword);
 
-
 	User getUserByPhone(String phone);
+	
+	boolean updateUserStatus(int userId, String status);
 
 }

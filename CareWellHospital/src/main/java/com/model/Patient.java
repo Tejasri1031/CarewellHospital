@@ -14,6 +14,10 @@ public class Patient {
     private String emergencyContactName;
     private String emergencyContactPhone;
     private Timestamp createdAt;
+    private String fullName;
+    private String email;
+    private String phone;
+    private String userStatus;
 
     public Patient() {
     }
@@ -105,5 +109,36 @@ public class Patient {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getUserStatus() {
+        return userStatus;
+    }
+
+    public void setUserStatus(String userStatus) {
+        this.userStatus = userStatus;
     }
 }

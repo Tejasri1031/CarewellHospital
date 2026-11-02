@@ -397,3 +397,166 @@
 		line-height: 1.5;
 	}
 }
+
+
+/* =========================
+   AI SYMPTOM RECOMMENDATION
+   ========================= */
+
+.symptom-panel {
+    margin: 0 30px 25px;
+    padding: 22px;
+    background: #f7faff;
+    border: 1px solid #dce8fa;
+    border-radius: 12px;
+}
+
+.symptom-panel h3 {
+    color: #263a55;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.symptom-description {
+    color: #718096;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.symptom-input {
+    width: 100%;
+    min-height: 110px;
+    padding: 13px;
+    border: 1px solid #d8e0ea;
+    border-radius: 8px;
+    resize: vertical;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    outline: none;
+}
+
+.symptom-input:focus {
+    border-color: #2675f5;
+    box-shadow: 0 0 0 3px rgba(38, 117, 245, 0.08);
+}
+
+.symptom-recommend-button {
+    margin-top: 14px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 7px;
+    background: #2675f5;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.symptom-recommend-button:hover {
+    background: #1766e6;
+}
+
+.symptom-recommend-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.symptom-result {
+    display: none;
+    margin-top: 18px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #dce8fa;
+    border-radius: 9px;
+}
+
+.symptom-result h4 {
+    color: #263a55;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.symptom-result p {
+    color: #64758b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.symptom-error {
+    color: #c0392b;
+    font-size: 12px;
+    margin-top: 12px;
+}
+
+.symptom-emergency {
+    background: #fff1f1;
+    border: 1px solid #f1caca;
+    color: #c0392b;
+    padding: 14px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+@media (max-width: 480px) {
+    .symptom-panel {
+        margin: 0 18px 20px;
+        padding: 17px;
+    }
+
+    .symptom-recommend-button {
+        width: 100%;
+    }
+}
+
+
+/* =========================
+   MEDICAL DOCUMENT UPLOAD
+   ========================= */
+
+.medical-upload-section {
+    background: #ffffff;
+}
+
+.upload-description {
+    color: #718096;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: -12px;
+    margin-bottom: 20px;
+}
+
+#medicalDocuments {
+    height: auto;
+    padding: 15px;
+    background: #f7faff;
+    border: 1px dashed #9bb9e8;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+#medicalDocuments:hover {
+    border-color: #2675f5;
+    background: #f1f7ff;
+}
+
+.medical-upload-section small {
+    display: block;
+    color: #8290a5;
+    font-size: 11px;
+    margin-top: 9px;
+}
+
+#selectedDocuments {
+    margin-top: 14px;
+    color: #354963;
+    font-size: 12px;
+}
+
+#selectedDocuments p {
+    padding: 9px 12px;
+    margin-bottom: 7px;
+    background: #f1f7ff;
+    border: 1px solid #dce8fa;
+    border-radius: 7px;
+}

@@ -66,6 +66,39 @@ public class DoctorDAOImpl implements DoctorDAO {
 
         return doctor;
     }
+    
+    @Override
+    public Doctor getDoctorDetailsForAdmin(int doctorId) {
+
+        String sql = "SELECT d.*, "
+                + "u.full_name, u.email, u.phone, u.status AS user_status, "
+                + "dep.department_name "
+                + "FROM doctors d "
+                + "INNER JOIN users u ON d.user_id = u.user_id "
+                + "INNER JOIN departments dep ON d.department_id = dep.department_id "
+                + "WHERE d.doctor_id = ? AND u.role = 'DOCTOR'";
+
+        Doctor doctor = null;
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, doctorId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    doctor = mapDoctor(resultSet);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return doctor;
+    }
+    
 
     @Override
     public List<Doctor> getAllDoctors() {
@@ -103,6 +136,34 @@ public class DoctorDAOImpl implements DoctorDAO {
 
             while (resultSet.next()) {
                 doctors.add(mapDoctor(resultSet));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return doctors;
+    }
+    
+    @Override
+    public List<Doctor> getAvailableDoctorsByDepartment(int departmentId) {
+
+        String sql = "SELECT * FROM doctors "
+                   + "WHERE department_id = ? "
+                   + "AND availability_status = 'AVAILABLE'";
+
+        List<Doctor> doctors = new ArrayList<>();
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, departmentId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+                    doctors.add(mapDoctor(resultSet));
+                }
             }
 
         } catch (Exception e) {
@@ -202,10 +263,48 @@ public class DoctorDAOImpl implements DoctorDAO {
         doctor.setConsultationFee(resultSet.getDouble("consultation_fee"));
         doctor.setBio(resultSet.getString("bio"));
         doctor.setProfileImage(resultSet.getString("profile_image"));
-        doctor.setAvailabilityStatus(
-                resultSet.getString("availability_status"));
+        doctor.setAvailabilityStatus(resultSet.getString("availability_status"));
         doctor.setCreatedAt(resultSet.getTimestamp("created_at"));
 
+        try {
+            doctor.setFullName(resultSet.getString("full_name"));
+            doctor.setEmail(resultSet.getString("email"));
+            doctor.setPhone(resultSet.getString("phone"));
+            doctor.setDepartmentName(resultSet.getString("department_name"));
+            doctor.setUserStatus(resultSet.getString("user_status"));
+        } catch (java.sql.SQLException e) {
+            // Additional columns are not available in ordinary doctor queries.
+        }
+
         return doctor;
+    }
+    
+    @Override
+    public List<Doctor> getAllDoctorsForAdmin() {
+
+        List<Doctor> doctors = new ArrayList<>();
+
+        String sql = "SELECT d.*, "
+                + "u.full_name, u.email, u.phone, u.status AS user_status, "
+                + "dep.department_name "
+                + "FROM doctors d "
+                + "INNER JOIN users u ON d.user_id = u.user_id "
+                + "INNER JOIN departments dep ON d.department_id = dep.department_id "
+                + "WHERE u.role = 'DOCTOR' "
+                + "ORDER BY d.doctor_id DESC";
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                doctors.add(mapDoctor(resultSet));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return doctors;
     }
 }

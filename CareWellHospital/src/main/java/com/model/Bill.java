@@ -18,6 +18,7 @@ public class Bill {
     private String paymentMethod;
     private String notes;
     private Timestamp createdAt;
+    private String patientName;
 
     public Bill() {
     }
@@ -146,5 +147,13 @@ public class Bill {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+    
+    public String getPatientName() {
+        return patientName;
+    }
+
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
     }
 }

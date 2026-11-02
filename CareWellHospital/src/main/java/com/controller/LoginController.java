@@ -132,9 +132,9 @@ public class LoginController extends HttpServlet {
         if ("ADMIN".equalsIgnoreCase(role)) {
 
             response.sendRedirect(
-                    request.getContextPath() + "/admin/dashboard.jsp");
-
-        } else if ("DOCTOR".equalsIgnoreCase(role)) {
+                    request.getContextPath() + "/AdminDashboardController");
+        }
+        else if ("DOCTOR".equalsIgnoreCase(role)) {
 
             response.sendRedirect(
                     request.getContextPath() + "/doctor/dashboard.jsp");
